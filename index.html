@@ -47,6 +47,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 0 15px;
+            position: relative;
         }
         
         .logo {
@@ -70,6 +71,46 @@
             color: white;
             font-size: 20px;
             cursor: pointer;
+            z-index: 101;
+        }
+        
+        .nav-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            width: 100%;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 5px 5px;
+        }
+        
+        .nav-menu.active {
+            max-height: 300px;
+        }
+        
+        .nav-menu ul {
+            list-style: none;
+            padding: 20px;
+        }
+        
+        .nav-menu li {
+            margin-bottom: 15px;
+        }
+        
+        .nav-menu a {
+            color: #2c3e50;
+            text-decoration: none;
+            font-weight: 500;
+            display: block;
+            padding: 5px 0;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-menu a:hover {
+            color: #3498db;
         }
         
         .hero {
@@ -327,6 +368,31 @@
             .hero h2 {
                 font-size: 32px;
             }
+            
+            .nav-toggle {
+                display: none;
+            }
+            
+            .nav-menu {
+                position: static;
+                max-height: none;
+                background: transparent;
+                width: auto;
+            }
+            
+            .nav-menu ul {
+                display: flex;
+                padding: 0;
+                gap: 20px;
+            }
+            
+            .nav-menu li {
+                margin-bottom: 0;
+            }
+            
+            .nav-menu a {
+                color: white;
+            }
         }
     </style>
 </head>
@@ -338,14 +404,25 @@
                     <i class="fas fa-house-damage"></i>
                     <h1>AduanMasyarakat</h1>
                 </div>
+                
                 <button class="nav-toggle">
                     <i class="fas fa-bars"></i>
                 </button>
+                
+                <nav class="nav-menu">
+                    <ul>
+                        <li><a href="#home">Beranda</a></li>
+                        <li><a href="#features">Fitur</a></li>
+                        <li><a href="#app-screenshot">Tampilan</a></li>
+                        <li><a href="#form-section">Buat Laporan</a></li>
+                        <li><a href="#download">Download</a></li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </header>
 
-    <section class="hero">
+    <section id="home" class="hero">
         <div class="container">
             <h2>Laporkan masalah Anda dengan mudah dan cepat</h2>
             <p>Aplikasi pengaduan masyarakat real-time yang memudahkan Anda melaporkan masalah di lingkungan sekitar dan melacak status pengaduannya.</p>
@@ -353,7 +430,7 @@
         </div>
     </section>
 
-    <section class="features">
+    <section id="features" class="features">
         <div class="container">
             <h2 class="section-title">Fitur Unggulan</h2>
             <div class="feature-grid">
@@ -391,7 +468,7 @@
         </div>
     </section>
 
-    <section class="app-screenshot">
+    <section id="app-screenshot" class="app-screenshot">
         <div class="container">
             <h2 class="section-title">Tampilan Aplikasi</h2>
             <div class="screenshot-container">
@@ -503,9 +580,35 @@
     </footer>
 
     <script>
-        // Simple JavaScript untuk menangani toggle navigasi
-        document.querySelector('.nav-toggle').addEventListener('click', function() {
-            alert('Menu navigasi akan ditampilkan di sini');
+        // JavaScript untuk toggle menu navigasi
+        const navToggle = document.querySelector('.nav-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        navToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+            
+            // Ganti ikon menu
+            const icon = this.querySelector('i');
+            if (navMenu.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+        
+        // Tutup menu ketika item menu diklik (untuk mobile)
+        const navLinks = document.querySelectorAll('.nav-menu a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth < 768) {
+                    navMenu.classList.remove('active');
+                    const icon = navToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
         });
         
         // Animasi sederhana untuk tombol
