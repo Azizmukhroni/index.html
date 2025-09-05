@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
     <style>
-        /* COPY CSS DARI INDEX.HTML - AWAL */
         * {
             margin: 0;
             padding: 0;
@@ -37,6 +36,12 @@
             text-decoration: none;
             font-weight: 600;
             margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
         }
         
         .btn {
@@ -58,6 +63,16 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
+        .btn-disabled {
+            opacity: 0.7;
+            cursor: not-allowed !important;
+        }
+        
+        .btn-disabled:hover {
+            transform: none !important;
+            background-color: #e74c3c !important;
+        }
+        
         .download-container {
             background: white;
             border-radius: 10px;
@@ -74,12 +89,6 @@
             border-radius: 10px;
             background: #f8f9fa;
         }
-        
-        .coming-soon {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-        /* COPY CSS DARI INDEX.HTML - AKHIR */
     </style>
 </head>
 <body>
@@ -104,8 +113,8 @@
             <div class="download-option">
                 <h2><i class="fab fa-apple"></i> iOS (iPhone)</h2>
                 <p>Aplikasi sedang dalam pengembangan</p>
-                <a href="#" class="btn coming-soon">
-                    <i class="fab fa-app-store"></i> Coming Soon
+                <a href="#" class="btn btn-disabled" onclick="return false;">
+                    <i class="fab fa-apple"></i> Coming Soon
                 </a>
             </div>
             
@@ -127,5 +136,15 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Prevent default untuk tombol disabled
+        document.querySelectorAll('.btn-disabled').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Versi iOS akan segera hadir. Mohon tunggu!');
+            });
+        });
+    </script>
 </body>
 </html>
