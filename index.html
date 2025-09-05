@@ -22,9 +22,6 @@
     <!-- Google Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
     
-    <!-- EmailJS SDK -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    
     <!-- CSS Internal -->
     <style>
         * {
@@ -711,28 +708,11 @@
         </div>
     </footer>
 
-    <!-- Modal untuk informasi konfigurasi -->
-    <div class="modal" id="config-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Konfigurasi Email</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <p>Untuk menerima email pengaduan, Anda perlu melakukan konfigurasi:</p>
-            <ol>
-                <li>Daftar akun gratis di <a href="https://www.emailjs.com" target="_blank">EmailJS.com</a></li>
-                <li>Tambahkan service email (Gmail/Outlook)</li>
-                <li>Buat template email</li>
-                <li>Ganti PUBLIC_KEY, SERVICE_ID, dan TEMPLATE_ID di kode JavaScript</li>
-            </ol>
-            <p>Atau gunakan opsi alternatif dengan FormSubmit:</p>
-            <button id="use-formsubmit" class="btn">Gunakan FormSubmit</button>
-        </div>
-    </div>
-
+    <!-- Script untuk EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
-        // Inisialisasi EmailJS
-        emailjs.init("PUBLIC_KEY"); // Ganti dengan Public Key Anda dari EmailJS
+        // Inisialisasi EmailJS dengan Service ID Anda
+        emailjs.init("YOUR_PUBLIC_KEY"); // Ganti dengan Public Key Anda dari EmailJS
 
         // Menu navigasi mobile
         document.querySelector('.nav-toggle').addEventListener('click', function() {
@@ -814,31 +794,10 @@
             const filePreviewContainer = document.getElementById('file-preview-container');
             const uploadStatus = document.getElementById('upload-status');
             const form = document.getElementById('complaint-form');
-            const configModal = document.getElementById('config-modal');
-            const modalClose = document.querySelector('.modal-close');
-            const useFormsubmitBtn = document.getElementById('use-formsubmit');
             
             const maxFiles = 5;
             const maxFileSize = 5 * 1024 * 1024; // 5MB
             let uploadedFiles = [];
-            let useFormSubmit = false;
-            
-            // Tampilkan modal konfigurasi saat halaman dimuat
-            setTimeout(() => {
-                configModal.style.display = 'flex';
-            }, 2000);
-            
-            // Tutup modal
-            modalClose.addEventListener('click', function() {
-                configModal.style.display = 'none';
-            });
-            
-            // Gunakan FormSubmit
-            useFormsubmitBtn.addEventListener('click', function() {
-                useFormSubmit = true;
-                configModal.style.display = 'none';
-                showStatus('Sekarang menggunakan FormSubmit. File akan dikirim sebagai link unduh.', 'info');
-            });
             
             // Prevent default drag behaviors
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -978,64 +937,9 @@
                 }, 5000);
             }
             
-            // Handle form submission
+            // Handle form submission dengan EmailJS
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
-                
-                if (useFormSubmit) {
-                    // Gunakan FormSubmit
-                    submitWithFormSubmit();
-                } else {
-                    // Gunakan EmailJS
-                    submitWithEmailJS();
-                }
-            });
-            
-            function submitWithFormSubmit() {
-                // Update form action untuk FormSubmit
-                form.action = 'https://formsubmit.co/ajax/Muhroniaziz@gmail.com';
-                
-                // Create a new FormData object
-                const formData = new FormData(form);
-                
-                // Append each file to the FormData
-                uploadedFiles.forEach(file => {
-                    formData.append('attachments', file);
-                });
-                
-                // Submit the form using fetch API
-                showStatus('Mengirim pengaduan...', 'info');
-                
-                fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        showStatus('Pengaduan berhasil dikirim! File akan tersedia sebagai link unduh di email.', 'success');
-                        form.reset();
-                        filePreviewContainer.innerHTML = '';
-                        uploadedFiles = [];
-                    } else {
-                        showStatus('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
-                    }
-                })
-                .catch(error => {
-                    showStatus('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
-                    console.error('Error:', error);
-                });
-            }
-            
-            function submitWithEmailJS() {
-                // Validasi jika EmailJS belum dikonfigurasi
-                if (emailjs.init.toString().includes("PUBLIC_KEY")) {
-                    showStatus('Error: Silakan konfigurasi EmailJS terlebih dahulu dengan Public Key yang valid.', 'error');
-                    configModal.style.display = 'flex';
-                    return;
-                }
                 
                 showStatus('Mengirim pengaduan...', 'info');
                 
@@ -1043,16 +947,16 @@
                 const templateParams = {
                     from_name: document.getElementById('name').value,
                     from_email: document.getElementById('email').value,
-                    phone: document.getElementById('phone').value,
+                    phone: document.getElementById('phone').value || 'Tidak diisi',
                     location: document.getElementById('location').value,
                     category: document.getElementById('category').value,
                     description: document.getElementById('description').value,
                     attachments_count: uploadedFiles.length,
-                    to_email: 'Muhroniaziz@gmail.com'
+                    to_email: 'aduanmasyarakat5@gmail.com'
                 };
                 
                 // Send email using EmailJS
-                emailjs.send('SERVICE_ID', 'TEMPLATE_ID', templateParams) // Ganti dengan Service ID dan Template ID Anda
+                emailjs.send('service_7kffbq9', 'YOUR_TEMPLATE_ID', templateParams)
                     .then(function(response) {
                         showStatus('Pengaduan berhasil dikirim! Kami akan segera menindaklanjuti.', 'success');
                         form.reset();
@@ -1062,7 +966,7 @@
                         showStatus('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
                         console.error('EmailJS Error:', error);
                     });
-            }
+            });
         });
 
         // Register Service Worker
