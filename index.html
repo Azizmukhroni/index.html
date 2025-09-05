@@ -331,7 +331,6 @@
     </style>
 </head>
 <body>
-    <!-- KODE HTML ANDA DI SINI (TANPA PERUBAHAN) -->
     <header>
         <div class="container">
             <div class="header-content">
@@ -432,49 +431,52 @@
         </div>
     </section>
 
-    <!-- GANTI FORM YANG LAMA DENGAN INI -->
-<form action="https://formspree.io/f/mwpnwrzk" method="POST">
-  <input type="hidden" name="_subject" value="Pengaduan Baru dari Website">
-  <input type="hidden" name="_replyto" value="Muhroniaziz@gmail.com">
-  
-  <div class="form-group">
-    <label for="name">Nama Lengkap</label>
-    <input type="text" id="name" name="name" required>
-  </div>
-  
-  <div class="form-group">
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" required>
-  </div>
-  
-  <div class="form-group">
-    <label for="phone">Nomor Telepon</label>
-    <input type="tel" id="phone" name="phone">
-  </div>
-  
-  <div class="form-group">
-    <label for="location">Lokasi Kejadian</label>
-    <input type="text" id="location" name="location" required>
-  </div>
-  
-  <div class="form-group">
-    <label for="category">Kategori Pengaduan</label>
-    <select id="category" name="category" required>
-      <option value="">Pilih Kategori</option>
-      <option value="infrastruktur">Infrastruktur (Jalan, Jembatan)</option>
-      <option value="kebersihan">Kebersihan (Sampah, Selokan)</option>
-      <option value="keamanan">Keamanan (Lampu Jalan, Patroli)</option>
-      <option value="lainnya">Lainnya</option>
-    </select>
-  </div>
-  
-  <div class="form-group">
-    <label for="description">Deskripsi Pengaduan</label>
-    <textarea id="description" name="description" required></textarea>
-  </div>
-  
-  <button type="submit" class="btn">Kirim Pengaduan</button>
-</form>
+    <section id="form-section" style="padding: 40px 20px;">
+        <div class="container">
+            <h2 class="section-title">Buat Pengaduan Baru</h2>
+            <div class="form-container">
+                <form action="https://formspree.io/f/mwpnwrzk" method="POST">
+                  <input type="hidden" name="_subject" value="Pengaduan Baru dari Website">
+                  <input type="hidden" name="_replyto" value="Muhroniaziz@gmail.com">
+                  
+                  <div class="form-group">
+                    <label for="name">Nama Lengkap</label>
+                    <input type="text" id="name" name="name" required>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="phone">Nomor Telepon</label>
+                    <input type="tel" id="phone" name="phone">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="location">Lokasi Kejadian</label>
+                    <input type="text" id="location" name="location" required>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="category">Kategori Pengaduan</label>
+                    <select id="category" name="category" required>
+                      <option value="">Pilih Kategori</option>
+                      <option value="infrastruktur">Infrastruktur (Jalan, Jembatan)</option>
+                      <option value="kebersihan">Kebersihan (Sampah, Selokan)</option>
+                      <option value="keamanan">Keamanan (Lampu Jalan, Patroli)</option>
+                      <option value="lainnya">Lainnya</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="description">Deskripsi Pengaduan</label>
+                    <textarea id="description" name="description" required></textarea>
+                  </div>
+                  
+                  <button type="submit" class="btn">Kirim Pengaduan</button>
+                </form>
             </div>
         </div>
     </section>
@@ -506,7 +508,7 @@
                 <a href="#">Bantuan</a>
                 <a href="#">Kontak</a>
             </div>
-            <p>© 2023 AduanMasyarakat. All rights reserved.</p>
+            <p>© 2025 AduanMasyarakat. All rights reserved.</p>
         </div>
     </footer>
 
@@ -530,11 +532,10 @@
             });
         });
         
-        // Form submission
-        document.getElementById('complaint-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Pengaduan Anda telah berhasil dikirim! Terima kasih telah melaporkan.');
-            this.reset();
+        // Form submission untuk Formspree dengan alert
+        document.querySelector('form[action*="formspree"]').addEventListener('submit', function(e) {
+            alert('Pengaduan Anda sedang dikirim...');
+            // Biarkan form submit ke Formspree secara normal
         });
     </script>
 </body>
