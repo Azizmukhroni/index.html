@@ -1,639 +1,185 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AduanMasyarakat - Layanan Pengaduan Real-Time</title>
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
-    
-    <!-- CSS Internal -->
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-        
-        body {
-            background-color: #f5f7fa;
-            color: #333;
-            max-width: 100%;
-            overflow-x: hidden;
-        }
-        
-        .container {
-            max-width: 100%;
-            padding: 0 15px;
-        }
-        
-        header {
-            background: linear-gradient(135deg, #2c3e50, #4a6491);
-            color: white;
-            padding: 15px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 15px;
-            position: relative;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .logo i {
-            font-size: 24px;
-        }
-        
-        .logo h1 {
-            font-size: 20px;
-            font-weight: 600;
-        }
-        
-        .nav-toggle {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            z-index: 101;
-        }
-        
-        .nav-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: white;
-            width: 100%;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border-radius: 0 0 5px 5px;
-        }
-        
-        .nav-menu.active {
-            max-height: 300px;
-        }
-        
-        .nav-menu ul {
-            list-style: none;
-            padding: 20px;
-        }
-        
-        .nav-menu li {
-            margin-bottom: 15px;
-        }
-        
-        .nav-menu a {
-            color: #2c3e50;
-            text-decoration: none;
-            font-weight: 500;
-            display: block;
-            padding: 5px 0;
-            transition: color 0.3s ease;
-        }
-        
-        .nav-menu a:hover {
-            color: #3498db;
-        }
-        
-        .hero {
-            background: linear-gradient(rgba(44, 62, 80, 0.8), rgba(44, 62, 80, 0.8)), #2c3e50;
-            background-size: cover;
-            background-position: center;
-            color: white;
-            padding: 40px 20px;
-            text-align: center;
-        }
-        
-        .hero h2 {
-            font-size: 24px;
-            margin-bottom: 15px;
-        }
-        
-        .hero p {
-            margin-bottom: 20px;
-            font-size: 16px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .btn {
-            display: inline-block;
-            background-color: #e74c3c;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-        }
-        
-        .btn:hover {
-            background-color: #c0392b;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .features {
-            padding: 40px 20px;
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #2c3e50;
-            font-size: 24px;
-        }
-        
-        .feature-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-        
-        .feature-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            text-align: center;
-        }
-        
-        .feature-card i {
-            font-size: 40px;
-            color: #3498db;
-            margin-bottom: 15px;
-        }
-        
-        .feature-card h3 {
-            margin-bottom: 10px;
-            color: #2c3e50;
-        }
-        
-        .app-screenshot {
-            background-color: #2c3e50;
-            padding: 40px 20px;
-            text-align: center;
-            color: white;
-        }
-        
-        .screenshot-container {
-            max-width: 300px;
-            margin: 0 auto;
-            position: relative;
-        }
-        
-        .phone-mockup {
-            background: #ecf0f1;
-            padding: 40px 18px 40px 18px;
-            height: 500px;
-            border-radius: 30px;
-            position: relative;
-        }
-        
-        .phone-content {
-            background-color: white;
-            height: 100%;
-            border-radius: 25px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .screen-content {
-            padding: 20px;
-            color: #333;
-            height: 100%;
-            overflow-y: auto;
-        }
-        
-        .complaint-item {
-            border-bottom: 1px solid #eee;
-            padding: 10px 0;
-        }
-        
-        .complaint-item h4 {
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-        
-        .complaint-item p {
-            font-size: 14px;
-            color: #7f8c8d;
-        }
-        
-        .status {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-        
-        .status.process {
-            background-color: #ffeaa7;
-            color: #d35400;
-        }
-        
-        .status.done {
-            background-color: #55efc4;
-            color: #00b894;
-        }
-        
-        .download-section {
-            padding: 40px 20px;
-            text-align: center;
-            background: linear-gradient(135deg, #3498db, #2c3e50);
-            color: white;
-        }
-        
-        .download-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .download-btn {
-            display: flex;
-            align-items: center;
-            background-color: white;
-            color: #2c3e50;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .download-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .download-btn i {
-            margin-right: 10px;
-            font-size: 24px;
-        }
-        
-        footer {
-            background-color: #2c3e50;
-            color: white;
-            padding: 30px 20px;
-            text-align: center;
-        }
-        
-        .footer-content {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-        
-        .footer-links a {
-            color: #ecf0f1;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-links a:hover {
-            color: #3498db;
-        }
-        
-        /* Form Styles */
-        .form-container {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px auto;
-            max-width: 600px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-        
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        
-        .form-group textarea {
-            min-height: 100px;
-        }
-        
-        @media (min-width: 768px) {
-            .feature-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .hero h2 {
-                font-size: 32px;
-            }
-            
-            .nav-toggle {
-                display: none;
-            }
-            
-            .nav-menu {
-                position: static;
-                max-height: none;
-                background: transparent;
-                width: auto;
-            }
-            
-            .nav-menu ul {
-                display: flex;
-                padding: 0;
-                gap: 20px;
-            }
-            
-            .nav-menu li {
-                margin-bottom: 0;
-            }
-            
-            .nav-menu a {
-                color: white;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aduan Masyarakat</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    /* Hero Section */
+    header.hero {
+      background: url('https://picsum.photos/1200/600?blur=3') center/cover no-repeat;
+      height: 60vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: white;
+      position: relative;
+    }
+    header.hero .overlay {
+      background: rgba(0,0,0,0.6);
+      padding: 30px;
+      border-radius: 12px;
+    }
+    header.hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+    header.hero p {
+      font-size: 1.2rem;
+    }
+    .btn-primary {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 12px 20px;
+      background: #007BFF;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+    .btn-primary:hover {
+      background: #0056b3;
+    }
+
+    /* Features */
+    section.features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 40px 20px;
+      background: #f8f9fa;
+    }
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .card h3 {
+      margin-bottom: 10px;
+      color: #007BFF;
+    }
+
+    /* Form Section */
+    section.form-section {
+      padding: 40px 20px;
+    }
+    section.form-section h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #007BFF;
+    }
+    form {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    form label {
+      display: block;
+      margin-top: 10px;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    form input, form textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    form button {
+      margin-top: 15px;
+      padding: 12px;
+      width: 100%;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.3s;
+    }
+    form button:hover {
+      background: #218838;
+    }
+
+    /* Footer */
+    footer {
+      background: #333;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 30px;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-house-damage"></i>
-                    <h1>AduanMasyarakat</h1>
-                </div>
-                
-                <button class="nav-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                
-                <nav class="nav-menu">
-                    <ul>
-                        <li><a href="#home">Beranda</a></li>
-                        <li><a href="#features">Fitur</a></li>
-                        <li><a href="#app-screenshot">Tampilan</a></li>
-                        <li><a href="#form-section">Buat Laporan</a></li>
-                        <li><a href="#download">Download</a></li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    </header>
 
-    <section id="home" class="hero">
-        <div class="container">
-            <h2>Laporkan masalah Anda dengan mudah dan cepat</h2>
-            <p>Aplikasi pengaduan masyarakat real-time yang memudahkan Anda melaporkan masalah di lingkungan sekitar dan melacak status pengaduannya.</p>
-            <a href="#download" class="btn">Download Sekarang</a>
-        </div>
-    </section>
+  <!-- Hero -->
+  <header class="hero">
+    <div class="overlay">
+      <h1>Aduan Masyarakat</h1>
+      <p>Sampaikan pengaduan Anda secara cepat, mudah, dan transparan</p>
+      <a href="#lapor" class="btn-primary">Buat Laporan</a>
+    </div>
+  </header>
 
-    <section id="features" class="features">
-        <div class="container">
-            <h2 class="section-title">Fitur Unggulan</h2>
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <i class="fas fa-bullhorn"></i>
-                    <h3>Laporan Real-Time</h3>
-                    <p>Kirim laporan dan dapatkan respon langsung dari instansi terkait</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-map-marked-alt"></i>
-                    <h3>Lokasi Presisi</h3>
-                    <p>Tentukan lokasi kejadian dengan akurat menggunakan GPS</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-history"></i>
-                    <h3>Lacak Status</h3>
-                    <p>Pantau perkembangan laporan Anda dari waktu ke waktu</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-camera"></i>
-                    <h3>Lampiran Foto</h3>
-                    <p>Sertakan foto sebagai bukti untuk memperkuat laporan</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-shield-alt"></i>
-                    <h3>Privasi Terjaga</h3>
-                    <p>Laporkan secara anonim atau dengan identitas yang terlindungi</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-bell"></i>
-                    <h3>Notifikasi</h3>
-                    <p>Dapatkan pemberitahuan ketika ada update pada laporan Anda</p>
-                </div>
-            </div>
-        </div>
-    </section>
+  <!-- Features -->
+  <section class="features">
+    <div class="card">
+      <h3>Laporan Real-Time</h3>
+      <p>Laporan Anda langsung terkirim ke sistem tanpa delay.</p>
+    </div>
+    <div class="card">
+      <h3>Lampiran Foto</h3>
+      <p>Tambahkan bukti visual agar laporan lebih valid.</p>
+    </div>
+    <div class="card">
+      <h3>Notifikasi Status</h3>
+      <p>Dapatkan informasi terbaru tentang perkembangan laporan Anda.</p>
+    </div>
+  </section>
 
-    <section id="app-screenshot" class="app-screenshot">
-        <div class="container">
-            <h2 class="section-title">Tampilan Aplikasi</h2>
-            <div class="screenshot-container">
-                <div class="phone-mockup">
-                    <div class="phone-content">
-                        <div class="screen-content">
-                            <h3 style="text-align: center; margin-bottom: 15px; color: #2c3e50;">Daftar Pengaduan</h3>
-                            
-                            <div id="complaints-container">
-                                <!-- Data akan diisi otomatis -->
-                                <div style="text-align: center; padding: 40px; color: #7f8c8d;">
-                                    <i class="fas fa-inbox" style="font-size: 40px; margin-bottom: 15px;"></i>
-                                    <p>Belum ada pengaduan</p>
-                                    <p>Jadilah yang pertama melaporkan</p>
-                                </div>
-                            </div>
-                            
-                            <div style="position: absolute; bottom: 20px; right: 20px;">
-                                <button class="btn" style="border-radius: 50%; width: 50px; height: 50px; padding: 0;">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+  <!-- Form -->
+  <section id="lapor" class="form-section">
+    <h2>Buat Laporan</h2>
+    <form>
+      <label for="nama">Nama Lengkap</label>
+      <input type="text" id="nama" name="nama" required>
 
-    <section id="form-section" style="padding: 40px 20px;">
-        <div class="container">
-            <h2 class="section-title">Buat Pengaduan Baru</h2>
-            <div class="form-container">
-                <form action="https://formspree.io/f/xdklpyyj" method="POST">
-                  <input type="hidden" name="_subject" value="Pengaduan Baru dari Website">
-                  <input type="hidden" name="_replyto" value="aduanmasyarakat5@gmail.com">
-                  
-                  <div class="form-group">
-                    <label for="name">Nama Lengkap</label>
-                    <input type="text" id="name" name="name" required>
-                  </div>
-                  
-                  <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
-                  </div>
-                  
-                  <div class="form-group">
-                    <label for="phone">Nomor Telepon</label>
-                    <input type="tel" id="phone" name="phone">
-                  </div>
-                  
-                  <div class="form-group">
-                    <label for="location">Lokasi Kejadian</label>
-                    <input type="text" id="location" name="location" required>
-                  </div>
-                  
-                  <div class="form-group">
-                    <label for="category">Kategori Pengaduan</label>
-                    <select id="category" name="category" required>
-                      <option value="">Pilih Kategori</option>
-                      <option value="infrastruktur">Infrastruktur (Jalan, Jembatan)</option>
-                      <option value="kebersihan">Kebersihan (Sampah, Selokan)</option>
-                      <option value="keamanan">Keamanan (Lampu Jalan, Patroli)</option>
-                      <option value="lainnya">Lainnya</option>
-                    </select>
-                  </div>
-                  
-                  <div class="form-group">
-                    <label for="description">Deskripsi Pengaduan</label>
-                    <textarea id="description" name="description" required></textarea>
-                  </div>
-                  
-                  <button type="submit" class="btn">Kirim Pengaduan</button>
-                </form>
-            </div>
-        </div>
-    </section>
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required>
 
-    <section id="download" class="download-section">
-        <div class="container">
-            <h2 class="section-title">Download Aplikasi Sekarang</h2>
-            <p>Unduh aplikasi AduanMasyarakat secara gratis di platform Android</p>
-            <div class="download-buttons">
-                <a href="download.html" class="download-btn">
-                    <i class="fab fa-google-play"></i>
-                    <span>Download App</span>
-                </a>
-            </div>
-        </div>
-    </section>
+      <label for="laporan">Isi Laporan</label>
+      <textarea id="laporan" name="laporan" rows="5" required></textarea>
 
-    <footer>
-        <div class="footer-content">
-            <div class="logo" style="justify-content: center;">
-                <i class="fas fa-house-damage"></i>
-                <h1>AduanMasyarakat</h1>
-            </div>
-            <p>Aplikasi layanan pengaduan masyarakat terpercaya sejak 2025</p>
-            <div class="footer-links">
-                <a href="tentang-kami.html">Tentang Kami</a>
-                <a href="privacy.html">Kebijakan Privasi</a>
-                <a href="terms.html">Syarat & Ketentuan</a>
-                <a href="help.html">Bantuan</a>
-                <a href="help.html#kontak">Kontak</a>
-            </div>
-            <p>© 2025 AduanMasyarakat. All rights reserved.</p>
-        </div>
-    </footer>
+      <label for="lampiran">Lampiran Foto</label>
+      <input type="file" id="lampiran" name="lampiran">
 
-    <script>
-        // JavaScript untuk toggle menu navigasi
-        const navToggle = document.querySelector('.nav-toggle');
-        const navMenu = document.querySelector('.nav-menu');
-        
-        navToggle.addEventListener('click', function() {
-            navMenu.classList.toggle('active');
-            
-            // Ganti ikon menu
-            const icon = this.querySelector('i');
-            if (navMenu.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
-        });
-        
-        // Tutup menu ketika item menu diklik (untuk mobile)
-        const navLinks = document.querySelectorAll('.nav-menu a');
-        navLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                if (window.innerWidth < 768) {
-                    navMenu.classList.remove('active');
-                    const icon = navToggle.querySelector('i');
-                    icon.classList.remove('fa-times');
-                    icon.classList.add('fa-bars');
-                }
-            });
-        });
-        
-        // Animasi sederhana untuk tombol
-        const buttons = document.querySelectorAll('.btn, .download-btn');
-        buttons.forEach(button => {
-            button.addEventListener('mousedown', function() {
-                this.style.transform = 'scale(0.95)';
-            });
-            button.addEventListener('mouseup', function() {
-                this.style.transform = '';
-            });
-            button.addEventListener('mouseleave', function() {
-                this.style.transform = '';
-            });
-        });
-        
-        // Form submission untuk Formspree dengan alert
-        setTimeout(function() {
-            const form = document.querySelector('form[action="https://formspree.io/f/mwpnwrzk"]');
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    alert('Pengaduan Anda sedang dikirim...');
-                });
-            }
-        }, 1000);
-    </script>
+      <button type="submit">Kirim Laporan</button>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Aduan Masyarakat. Semua Hak Dilindungi.</p>
+  </footer>
+
 </body>
 </html>
