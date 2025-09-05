@@ -1,6 +1,123 @@
-<div class="download-buttons">
-    <a href="download.html" class="download-btn">
-        <i class="fab fa-google-play"></i>
-        <span>Download App</span>
-    </a>
-</div>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Aplikasi - AduanMasyarakat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        
+        .download-option {
+            margin: 30px 0;
+            padding: 20px;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: #e74c3c;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .coming-soon {
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">← Kembali ke Beranda</a>
+        
+        <h1>📥 Download Aplikasi AduanMasyarakat</h1>
+        <p>Pilih platform download yang tersedia:</p>
+        
+        <div class="download-option">
+            <h2><i class="fab fa-android"></i> Android</h2>
+            <p>Aplikasi tersedia di Google Play Store</p>
+            <a href="https://play.google.com/store/apps/details?id=com.aduan.masyarakat" 
+               class="btn" 
+               target="_blank"
+               onclick="alert('Jika aplikasi belum tersedia, mohon tunggu beberapa hari lagi untuk proses review Google');">
+                <i class="fab fa-google-play"></i> Download di Google Play
+            </a>
+        </div>
+        
+        <div class="download-option">
+            <h2><i class="fab fa-apple"></i> iOS (iPhone)</h2>
+            <p>Aplikasi sedang dalam pengembangan</p>
+            <a href="#" class="btn coming-soon">
+                <i class="fab fa-app-store"></i> Coming Soon
+            </a>
+        </div>
+        
+        <div class="download-option">
+            <h2><i class="fas fa-globe"></i> Website Version</h2>
+            <p>Anda bisa menggunakan versi website yang sudah responsive</p>
+            <a href="index.html" class="btn" style="background-color: #3498db;">
+                <i class="fas fa-desktop"></i> Gunakan Website
+            </a>
+            <p style="font-size: 14px; margin-top: 10px;">
+                <strong>Tip:</strong> Di browser mobile, pilih "Add to Home Screen" untuk experience seperti app
+            </p>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #ffeaa7; border-radius: 10px;">
+            <h3><i class="fas fa-info-circle"></i> Informasi Penting</h3>
+            <p>Aplikasi native sedang dalam proses review oleh Google Play Store. Proses ini biasanya memakan waktu 2-7 hari.</p>
+            <p>Sementara menunggu, Anda sudah bisa menggunakan website version yang memiliki fitur lengkap sama.</p>
+        </div>
+    </div>
+
+    <script>
+        // Tracking untuk download
+        function trackDownload(platform) {
+            console.log('Download attempted for:', platform);
+        }
+    </script>
+</body>
+</html>
