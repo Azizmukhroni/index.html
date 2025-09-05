@@ -399,26 +399,16 @@
                     <div class="phone-content">
                         <div class="screen-content">
                             <h3 style="text-align: center; margin-bottom: 15px; color: #2c3e50;">Daftar Pengaduan</h3>
-                            <div class="complaint-item">
-                                <h4>Jalan Rusak</h4>
-                                <p>Jl. Merdeka No. 23, Kec. Sukajadi</p>
-                                <span class="status process">Dalam Proses</span>
+                            
+                            <div id="complaints-container">
+                                <!-- Data akan diisi otomatis -->
+                                <div style="text-align: center; padding: 40px; color: #7f8c8d;">
+                                    <i class="fas fa-inbox" style="font-size: 40px; margin-bottom: 15px;"></i>
+                                    <p>Belum ada pengaduan</p>
+                                    <p>Jadilah yang pertama melaporkan</p>
+                                </div>
                             </div>
-                            <div class="complaint-item">
-                                <h4>Lampu Jalan Mati</h4>
-                                <p>Jl. Cendana No. 45, Kec. Andir</p>
-                                <span class="status process">Dalam Proses</span>
-                            </div>
-                            <div class="complaint-item">
-                                <h4>Selokan Tersumbat</h4>
-                                <p>Jl. Anggrek No. 12, Kec. Batununggal</p>
-                                <span class="status done">Selesai</span>
-                            </div>
-                            <div class="complaint-item">
-                                <h4>TPS Penuh</h4>
-                                <p>Jl. Mawar No. 78, Kec. Bandung Kidul</p>
-                                <span class="status process">Dalam Proses</span>
-                            </div>
+                            
                             <div style="position: absolute; bottom: 20px; right: 20px;">
                                 <button class="btn" style="border-radius: 50%; width: 50px; height: 50px; padding: 0;">
                                     <i class="fas fa-plus"></i>
@@ -486,9 +476,9 @@
             <h2 class="section-title">Download Aplikasi Sekarang</h2>
             <p>Unduh aplikasi AduanMasyarakat secara gratis di platform Android</p>
             <div class="download-buttons">
-                <a href="#" class="download-btn">
+                <a href="download.html" class="download-btn">
                     <i class="fab fa-google-play"></i>
-                    <span>Google Play</span>
+                    <span>Download App</span>
                 </a>
             </div>
         </div>
@@ -501,13 +491,13 @@
                 <h1>AduanMasyarakat</h1>
             </div>
             <p>Aplikasi layanan pengaduan masyarakat terpercaya sejak 2025</p>
-         <div class="footer-links">
-    <a href="tentang-kami.html">Tentang Kami</a>
-    <a href="privacy.html">Kebijakan Privasi</a>
-    <a href="terms.html">Syarat & Ketentuan</a>
-    <a href="help.html">Bantuan</a>
-    <a href="help.html#kontak">Kontak</a>
- </div>
+            <div class="footer-links">
+                <a href="tentang-kami.html">Tentang Kami</a>
+                <a href="privacy.html">Kebijakan Privasi</a>
+                <a href="terms.html">Syarat & Ketentuan</a>
+                <a href="help.html">Bantuan</a>
+                <a href="help.html#kontak">Kontak</a>
+            </div>
             <p>© 2025 AduanMasyarakat. All rights reserved.</p>
         </div>
     </footer>
@@ -533,10 +523,14 @@
         });
         
         // Form submission untuk Formspree dengan alert
-        document.querySelector('form[action*="formspree"]').addEventListener('submit', function(e) {
-            alert('Pengaduan Anda sedang dikirim...');
-            // Biarkan form submit ke Formspree secara normal
-        });
+        setTimeout(function() {
+            const form = document.querySelector('form[action="https://formspree.io/f/mwpnwrzk"]');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    alert('Pengaduan Anda sedang dikirim...');
+                });
+            }
+        }, 1000);
     </script>
 </body>
 </html>
