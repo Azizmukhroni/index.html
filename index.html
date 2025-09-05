@@ -1,30 +1,20 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<!-- Tambahkan di head -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#3498db">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-
-<script>
-// Register Service Worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('sw.js')
-      .then(function(registration) {
-        console.log('SW registered: ', registration);
-      })
-      .catch(function(registrationError) {
-        console.log('SW registration failed: ', registrationError);
-      });
-  });
-}
-</script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AduanMasyarakat - Layanan Pengaduan Real-Time</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2c3e50">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="AduanMasyarakat">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/180/1006/1006771.png">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/192/1006/1006771.png">
+    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/192/1006/1006771.png">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -68,7 +58,6 @@ if ('serviceWorker' in navigator) {
             justify-content: space-between;
             align-items: center;
             padding: 0 15px;
-            position: relative;
         }
         
         .logo {
@@ -92,46 +81,8 @@ if ('serviceWorker' in navigator) {
             color: white;
             font-size: 20px;
             cursor: pointer;
-            z-index: 101;
-        }
-        
-        .nav-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: white;
-            width: 100%;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border-radius: 0 0 5px 5px;
-        }
-        
-        .nav-menu.active {
-            max-height: 300px;
-        }
-        
-        .nav-menu ul {
-            list-style: none;
-            padding: 20px;
-        }
-        
-        .nav-menu li {
-            margin-bottom: 15px;
-        }
-        
-        .nav-menu a {
-            color: #2c3e50;
-            text-decoration: none;
-            font-weight: 500;
-            display: block;
-            padding: 5px 0;
-            transition: color 0.3s ease;
-        }
-        
-        .nav-menu a:hover {
-            color: #3498db;
+            min-width: 44px;
+            min-height: 44px;
         }
         
         .hero {
@@ -167,6 +118,7 @@ if ('serviceWorker' in navigator) {
             transition: all 0.3s ease;
             border: none;
             cursor: pointer;
+            min-height: 44px;
         }
         
         .btn:hover {
@@ -305,6 +257,7 @@ if ('serviceWorker' in navigator) {
             text-decoration: none;
             font-weight: 600;
             transition: all 0.3s ease;
+            min-height: 44px;
         }
         
         .download-btn:hover {
@@ -341,6 +294,7 @@ if ('serviceWorker' in navigator) {
             color: #ecf0f1;
             text-decoration: none;
             transition: color 0.3s ease;
+            padding: 5px 10px;
         }
         
         .footer-links a:hover {
@@ -371,7 +325,7 @@ if ('serviceWorker' in navigator) {
         .form-group textarea,
         .form-group select {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 16px;
@@ -381,6 +335,38 @@ if ('serviceWorker' in navigator) {
             min-height: 100px;
         }
         
+        /* PWA Specific Styles */
+        @media (display-mode: standalone) {
+            body {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+            
+            header {
+                padding-top: calc(15px + env(safe-area-inset-top));
+            }
+        }
+
+        /* Touch improvements */
+        @media (max-width: 768px) {
+            .btn, .download-btn, .nav-toggle {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            input, textarea, select {
+                font-size: 16px !important;
+            }
+        }
+
+        /* Safe area insets for notch phones */
+        @supports(padding: max(0px)) {
+            body {
+                padding-left: max(15px, env(safe-area-inset-left));
+                padding-right: max(15px, env(safe-area-inset-right));
+            }
+        }
+        
         @media (min-width: 768px) {
             .feature-grid {
                 grid-template-columns: repeat(3, 1fr);
@@ -388,31 +374,6 @@ if ('serviceWorker' in navigator) {
             
             .hero h2 {
                 font-size: 32px;
-            }
-            
-            .nav-toggle {
-                display: none;
-            }
-            
-            .nav-menu {
-                position: static;
-                max-height: none;
-                background: transparent;
-                width: auto;
-            }
-            
-            .nav-menu ul {
-                display: flex;
-                padding: 0;
-                gap: 20px;
-            }
-            
-            .nav-menu li {
-                margin-bottom: 0;
-            }
-            
-            .nav-menu a {
-                color: white;
             }
         }
     </style>
@@ -425,25 +386,14 @@ if ('serviceWorker' in navigator) {
                     <i class="fas fa-house-damage"></i>
                     <h1>AduanMasyarakat</h1>
                 </div>
-                
                 <button class="nav-toggle">
                     <i class="fas fa-bars"></i>
                 </button>
-                
-                <nav class="nav-menu">
-                    <ul>
-                        <li><a href="#home">Beranda</a></li>
-                        <li><a href="#features">Fitur</a></li>
-                        <li><a href="#app-screenshot">Tampilan</a></li>
-                        <li><a href="#form-section">Buat Laporan</a></li>
-                        <li><a href="#download">Download</a></li>
-                    </ul>
-                </nav>
             </div>
         </div>
     </header>
 
-    <section id="home" class="hero">
+    <section class="hero">
         <div class="container">
             <h2>Laporkan masalah Anda dengan mudah dan cepat</h2>
             <p>Aplikasi pengaduan masyarakat real-time yang memudahkan Anda melaporkan masalah di lingkungan sekitar dan melacak status pengaduannya.</p>
@@ -451,7 +401,7 @@ if ('serviceWorker' in navigator) {
         </div>
     </section>
 
-    <section id="features" class="features">
+    <section class="features">
         <div class="container">
             <h2 class="section-title">Fitur Unggulan</h2>
             <div class="feature-grid">
@@ -489,7 +439,7 @@ if ('serviceWorker' in navigator) {
         </div>
     </section>
 
-    <section id="app-screenshot" class="app-screenshot">
+    <section class="app-screenshot">
         <div class="container">
             <h2 class="section-title">Tampilan Aplikasi</h2>
             <div class="screenshot-container">
@@ -523,9 +473,9 @@ if ('serviceWorker' in navigator) {
         <div class="container">
             <h2 class="section-title">Buat Pengaduan Baru</h2>
             <div class="form-container">
-                <form action="https://formspree.io/f/xdklpyyj" method="POST">
+                <form action="https://formspree.io/f/mwpnwrzk" method="POST">
                   <input type="hidden" name="_subject" value="Pengaduan Baru dari Website">
-                  <input type="hidden" name="_replyto" value="aduanmasyarakat5@gmail.com">
+                  <input type="hidden" name="_replyto" value="Muhroniaziz@gmail.com">
                   
                   <div class="form-group">
                     <label for="name">Nama Lengkap</label>
@@ -601,37 +551,65 @@ if ('serviceWorker' in navigator) {
     </footer>
 
     <script>
-        // JavaScript untuk toggle menu navigasi
-        const navToggle = document.querySelector('.nav-toggle');
-        const navMenu = document.querySelector('.nav-menu');
-        
-        navToggle.addEventListener('click', function() {
-            navMenu.classList.toggle('active');
+        // Menu navigasi mobile
+        document.querySelector('.nav-toggle').addEventListener('click', function() {
+            // Buat modal/navigation drawer
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                right: 0;
+                width: 250px;
+                height: 100%;
+                background: white;
+                box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+                z-index: 1000;
+                padding: 50px 20px;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
             
-            // Ganti ikon menu
-            const icon = this.querySelector('i');
-            if (navMenu.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
-        });
-        
-        // Tutup menu ketika item menu diklik (untuk mobile)
-        const navLinks = document.querySelectorAll('.nav-menu a');
-        navLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                if (window.innerWidth < 768) {
-                    navMenu.classList.remove('active');
-                    const icon = navToggle.querySelector('i');
-                    icon.classList.remove('fa-times');
-                    icon.classList.add('fa-bars');
+            modal.innerHTML = `
+                <button style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 20px; color: #2c3e50;">×</button>
+                <h3 style="color: #2c3e50; margin-bottom: 20px;">Menu Navigasi</h3>
+                <nav style="display: flex; flex-direction: column; gap: 10px;">
+                    <a href="index.html" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">🏠 Beranda</a>
+                    <a href="tentang-kami.html" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">ℹ️ Tentang Kami</a>
+                    <a href="#form-section" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">📝 Buat Pengaduan</a>
+                    <a href="download.html" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">📱 Download App</a>
+                    <a href="help.html" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">❓ Bantuan</a>
+                    <a href="help.html#kontak" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">📞 Kontak</a>
+                </nav>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Animate in
+            setTimeout(() => modal.style.transform = 'translateX(0)', 10);
+            
+            // Close button
+            modal.querySelector('button').addEventListener('click', function() {
+                modal.style.transform = 'translateX(100%)';
+                setTimeout(() => modal.remove(), 300);
+            });
+            
+            // Close when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.transform = 'translateX(100%)';
+                    setTimeout(() => modal.remove(), 300);
                 }
             });
+            
+            // Close when clicking on links
+            modal.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', function() {
+                    modal.style.transform = 'translateX(100%)';
+                    setTimeout(() => modal.remove(), 300);
+                });
+            });
         });
-        
+
         // Animasi sederhana untuk tombol
         const buttons = document.querySelectorAll('.btn, .download-btn');
         buttons.forEach(button => {
@@ -645,7 +623,7 @@ if ('serviceWorker' in navigator) {
                 this.style.transform = '';
             });
         });
-        
+
         // Form submission untuk Formspree dengan alert
         setTimeout(function() {
             const form = document.querySelector('form[action="https://formspree.io/f/mwpnwrzk"]');
@@ -655,6 +633,40 @@ if ('serviceWorker' in navigator) {
                 });
             }
         }, 1000);
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('sw.js')
+                    .then(function(registration) {
+                        console.log('SW registered successfully with scope: ', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('SW registration failed: ', error);
+                    });
+            });
+        }
+
+        // Detect jika di standalone mode
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            console.log('Running as PWA');
+            document.body.classList.add('pwa-mode');
+        }
+
+        // Beforeinstallprompt event
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            console.log('PWA dapat diinstall');
+        });
+
+        // Tangkap error images
+        document.addEventListener('error', function(e) {
+            if (e.target.tagName === 'IMG') {
+                e.target.style.display = 'none';
+            }
+        }, true);
     </script>
 </body>
 </html>
