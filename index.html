@@ -416,6 +416,25 @@
             padding: 5px;
         }
         
+        .upload-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .upload-status.success {
+            background-color: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        
+        .upload-status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        
         /* PWA Specific Styles */
         @media (display-mode: standalone) {
             body {
@@ -554,9 +573,10 @@
         <div class="container">
             <h2 class="section-title">Buat Pengaduan Baru</h2>
             <div class="form-container">
-                <form action="https://formspree.io/f/mwpnwrzk" method="POST" enctype="multipart/form-data" id="complaint-form">
-                  <input type="hidden" name="_subject" value="Pengaduan Baru dari Website">
-                  <input type="hidden" name="_replyto" value="Muhroniaziz@gmail.com">
+                <form id="complaint-form" method="POST" enctype="multipart/form-data">
+                  <input type="hidden" name="_subject" value="Pengaduan Baru dari Website AduanMasyarakat">
+                  <input type="hidden" name="_template" value="table">
+                  <input type="hidden" name="_autoresponse" value="Terima kasih telah mengirim pengaduan. Kami akan segera menindaklanjuti laporan Anda.">
                   
                   <div class="form-group">
                     <label for="name">Nama Lengkap</label>
@@ -609,6 +629,7 @@
                     </div>
                     
                     <div class="file-preview-container" id="file-preview-container"></div>
+                    <div class="upload-status" id="upload-status"></div>
                   </div>
                   
                   <button type="submit" class="btn">Kirim Pengaduan</button>
@@ -727,6 +748,8 @@
             const fileInput = document.getElementById('file-input');
             const fileDropArea = document.getElementById('file-drop-area');
             const filePreviewContainer = document.getElementById('file-preview-container');
+            const uploadStatus = document.getElementById('upload-status');
+            const form = document.getElementById('complaint-form');
             const maxFiles = 5;
             const maxFileSize = 5 * 1024 * 1024; // 5MB
             let uploadedFiles = [];
@@ -777,7 +800,7 @@
                 const files = e.target.files;
                 
                 if (uploadedFiles.length + files.length > maxFiles) {
-                    alert(`Maksimal ${maxFiles} file yang dapat diunggah.`);
+                    showStatus(`Maksimal ${maxFiles} file yang dapat diunggah.`, 'error');
                     return;
                 }
                 
@@ -786,14 +809,14 @@
                     
                     // Validate file size
                     if (file.size > maxFileSize) {
-                        alert(`File ${file.name} terlalu besar. Maksimal ukuran file adalah 5MB.`);
+                        showStatus(`File ${file.name} terlalu besar. Maksimal ukuran file adalah 5MB.`, 'error');
                         continue;
                     }
                     
                     // Validate file type
                     const validFileTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
                     if (!validFileTypes.includes(file.type)) {
-                        alert(`File ${file.name} memiliki tipe yang tidak didukung. Hanya gambar, PDF, dan dokumen Word yang diperbolehkan.`);
+                        showStatus(`File ${file.name} memiliki tipe yang tidak didukung. Hanya gambar, PDF, dan dokumen Word yang diperbolehkan.`, 'error');
                         continue;
                     }
                     
@@ -861,9 +884,20 @@
                 return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
             }
             
-            // Update form submission to include files
-            const form = document.getElementById('complaint-form');
+            function showStatus(message, type) {
+                uploadStatus.textContent = message;
+                uploadStatus.className = 'upload-status ' + type;
+                setTimeout(() => {
+                    uploadStatus.className = 'upload-status';
+                }, 5000);
+            }
+            
+            // Update form submission to use FormSubmit
+            form.action = 'https://formsubmit.co/ajax/Muhroniaziz@gmail.com';
+            
             form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
                 // Check if files are selected
                 if (uploadedFiles.length > 0) {
                     // Create a new FormData object
@@ -875,9 +909,7 @@
                     });
                     
                     // Submit the form using fetch API
-                    e.preventDefault();
-                    
-                    alert('Pengaduan Anda sedang dikirim...');
+                    showStatus('Mengirim pengaduan...', '');
                     
                     fetch(form.action, {
                         method: 'POST',
@@ -888,21 +920,41 @@
                     })
                     .then(response => {
                         if (response.ok) {
-                            alert('Pengaduan berhasil dikirim!');
+                            showStatus('Pengaduan berhasil dikirim! Kami akan segera menindaklanjuti.', 'success');
                             form.reset();
                             filePreviewContainer.innerHTML = '';
                             uploadedFiles = [];
                         } else {
-                            alert('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.');
+                            showStatus('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
                         }
                     })
                     .catch(error => {
-                        alert('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.');
+                        showStatus('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
                         console.error('Error:', error);
                     });
                 } else {
                     // If no files, submit normally
-                    alert('Pengaduan Anda sedang dikirim...');
+                    showStatus('Mengirim pengaduan...', '');
+                    
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: new FormData(form),
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            showStatus('Pengaduan berhasil dikirim! Kami akan segera menindaklanjuti.', 'success');
+                            form.reset();
+                        } else {
+                            showStatus('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        showStatus('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
+                        console.error('Error:', error);
+                    });
                 }
             });
         });
