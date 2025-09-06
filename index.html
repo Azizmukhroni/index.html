@@ -416,6 +416,33 @@
             padding: 5px;
         }
         
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #333;
+            color: white;
+            padding: 16px;
+            border-radius: 4px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            max-width: 300px;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+        
+        .toast.success {
+            background-color: #2ecc71;
+        }
+        
+        .toast.error {
+            background-color: #e74c3c;
+        }
+        
         /* PWA Specific Styles */
         @media (display-mode: standalone) {
             body {
@@ -460,6 +487,9 @@
     </style>
 </head>
 <body>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
     <header>
         <div class="container">
             <div class="header-content">
@@ -861,50 +891,141 @@
                 return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
             }
             
-            // Update form submission to include files
+            // Fungsi untuk menampilkan toast notification
+            function showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.className = `toast ${type} show`;
+                
+                setTimeout(() => {
+                    toast.className = 'toast';
+                }, 3000);
+            }
+            
+            // Fungsi untuk menyimpan data pengaduan ke localStorage
+            function saveComplaintToLocal(complaintData) {
+                // Ambil data yang sudah ada dari localStorage
+                const existingComplaints = JSON.parse(localStorage.getItem('complaints')) || [];
+                
+                // Tambahkan ID dan timestamp ke data pengaduan
+                complaintData.id = Date.now();
+                complaintData.timestamp = new Date().toISOString();
+                complaintData.status = 'process'; // Status default
+                
+                // Tambahkan pengaduan baru ke array
+                existingComplaints.push(complaintData);
+                
+                // Simpan kembali ke localStorage
+                localStorage.setItem('complaints', JSON.stringify(existingComplaints));
+                
+                return complaintData;
+            }
+            
+            // Fungsi untuk menampilkan daftar pengaduan
+            function displayComplaints() {
+                const complaintsContainer = document.getElementById('complaints-container');
+                const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+                
+                if (complaints.length === 0) {
+                    complaintsContainer.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #7f8c8d;">
+                            <i class="fas fa-inbox" style="font-size: 40px; margin-bottom: 15px;"></i>
+                            <p>Belum ada pengaduan</p>
+                            <p>Jadilah yang pertama melaporkan</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Urutkan berdasarkan timestamp (terbaru pertama)
+                complaints.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                
+                // Tampilkan maksimal 5 pengaduan terbaru
+                const recentComplaints = complaints.slice(0, 5);
+                
+                let complaintsHTML = '';
+                recentComplaints.forEach(complaint => {
+                    const date = new Date(complaint.timestamp).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                    });
+                    
+                    const statusClass = complaint.status === 'done' ? 'done' : 'process';
+                    const statusText = complaint.status === 'done' ? 'Selesai' : 'Diproses';
+                    
+                    complaintsHTML += `
+                        <div class="complaint-item">
+                            <h4>${complaint.category}</h4>
+                            <p>${complaint.description.substring(0, 60)}${complaint.description.length > 60 ? '...' : ''}</p>
+                            <p><small>${date}</small></p>
+                            <span class="status ${statusClass}">${statusText}</span>
+                        </div>
+                    `;
+                });
+                
+                complaintsContainer.innerHTML = complaintsHTML;
+            }
+            
+            // Update form submission untuk menyimpan data ke localStorage
             const form = document.getElementById('complaint-form');
             form.addEventListener('submit', function(e) {
-                // Check if files are selected
-                if (uploadedFiles.length > 0) {
-                    // Create a new FormData object
-                    const formData = new FormData(form);
-                    
-                    // Append each file to the FormData
-                    uploadedFiles.forEach(file => {
-                        formData.append('attachments', file);
-                    });
-                    
-                    // Submit the form using fetch API
-                    e.preventDefault();
-                    
-                    alert('Pengaduan Anda sedang dikirim...');
-                    
-                    fetch(form.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'Accept': 'application/json'
-                        }
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            alert('Pengaduan berhasil dikirim!');
-                            form.reset();
-                            filePreviewContainer.innerHTML = '';
-                            uploadedFiles = [];
-                        } else {
-                            alert('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.');
-                        }
-                    })
-                    .catch(error => {
-                        alert('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.');
-                        console.error('Error:', error);
-                    });
-                } else {
-                    // If no files, submit normally
-                    alert('Pengaduan Anda sedang dikirim...');
-                }
+                e.preventDefault();
+                
+                // Ambil data dari form
+                const formData = new FormData(form);
+                const complaintData = {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    location: formData.get('location'),
+                    category: formData.get('category'),
+                    description: formData.get('description')
+                };
+                
+                // Simpan ke localStorage
+                saveComplaintToLocal(complaintData);
+                
+                // Perbarui tampilan daftar pengaduan
+                displayComplaints();
+                
+                // Tampilkan notifikasi sukses
+                showToast('Pengaduan berhasil dikirim!', 'success');
+                
+                // Kirim data ke Formspree (jika diperlukan)
+                // Jika ingin mengirim ke Formspree, hapus komentar di bawah ini
+                /*
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        showToast('Pengaduan berhasil dikirim!', 'success');
+                        form.reset();
+                        filePreviewContainer.innerHTML = '';
+                        uploadedFiles = [];
+                    } else {
+                        showToast('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
+                    }
+                })
+                .catch(error => {
+                    showToast('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
+                    console.error('Error:', error);
+                });
+                */
+                
+                // Reset form
+                form.reset();
+                filePreviewContainer.innerHTML = '';
+                uploadedFiles = [];
             });
+            
+            // Tampilkan daftar pengaduan saat halaman dimuat
+            displayComplaints();
         });
 
         // Register Service Worker
