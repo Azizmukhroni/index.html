@@ -682,7 +682,7 @@
             <h2 class="section-title">Download Aplikasi Sekarang</h2>
             <p>Unduh aplikasi AduanMasyarakat secara gratis di platform Android</p>
             <div class="download-buttons">
-                <a href="download.html" class="download-btn">
+                <a href="#download" class="download-btn">
                     <i class="fab fa-google-play"></i>
                     <span>Download App</span>
                 </a>
@@ -698,11 +698,11 @@
             </div>
             <p>Aplikasi layanan pengaduan masyarakat terpercaya sejak 2025</p>
             <div class="footer-links">
-                <a href="tentang-kami.html">Tentang Kami</a>
-                <a href="privacy.html">Kebijakan Privasi</a>
-                <a href="terms.html">Syarat & Ketentuan</a>
-                <a href="help.html">Bantuan</a>
-                <a href="help.html#kontak">Kontak</a>
+                <a href="#tentang-kami">Tentang Kami</a>
+                <a href="#privacy">Kebijakan Privasi</a>
+                <a href="#terms">Syarat & Ketentuan</a>
+                <a href="#help">Bantuan</a>
+                <a href="#kontak">Kontak</a>
             </div>
             <p>© 2025 AduanMasyarakat. All rights reserved.</p>
         </div>
@@ -715,15 +715,14 @@
                 <h3>Konfigurasi Email</h3>
                 <button class="modal-close">&times;</button>
             </div>
-            <p>Untuk menerima email pengaduan, Anda perlu melakukan konfigurasi:</p>
-            <ol>
-                <li>Daftar akun gratis di <a href="https://www.emailjs.com" target="_blank">EmailJS.com</a></li>
-                <li>Tambahkan service email (Gmail/Outlook)</li>
-                <li>Buat template email</li>
-                <li>Ganti PUBLIC_KEY, SERVICE_ID, dan TEMPLATE_ID di kode JavaScript</li>
-            </ol>
-            <p>Atau gunakan opsi alternatif dengan FormSubmit:</p>
-            <button id="use-formsubmit" class="btn">Gunakan FormSubmit</button>
+            <p>EmailJS telah dikonfigurasi dengan kunci berikut:</p>
+            <ul>
+                <li>Public Key: _4hkLc3TPg40dv--Y</li>
+                <li>Service ID: service_7kffbq9</li>
+                <li>Template ID: template_1qiqw7s</li>
+            </ul>
+            <p>Sistem siap menerima pengaduan melalui email.</p>
+            <button id="close-config" class="btn">Mengerti</button>
         </div>
     </div>
 
@@ -731,16 +730,21 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
         // Inisialisasi EmailJS dengan Service ID Anda
-        // Ganti YOUR_PUBLIC_KEY dengan Public Key dari EmailJS
-        // Untuk demo, kita akan menggunakan FormSubmit sebagai fallback
-        let emailConfigured = false;
+        // Menggunakan Public Key, Service ID, dan Template ID yang diberikan
+        let emailConfigured = true;
         
         try {
-            // Coba inisialisasi EmailJS - ganti dengan public key Anda
+            // Inisialisasi EmailJS dengan Public Key yang diberikan
             emailjs.init("_4hkLc3TPg40dv--Y");
             emailConfigured = true;
+            
+            // Tampilkan modal konfigurasi
+            setTimeout(() => {
+                document.getElementById('config-modal').style.display = 'flex';
+            }, 2000);
         } catch (e) {
-            console.log("EmailJS not configured. Using FormSubmit as fallback.");
+            console.log("EmailJS initialization error:", e);
+            emailConfigured = false;
         }
 
         // Menu navigasi mobile
@@ -765,12 +769,12 @@
                 <button style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 20px; color: #2c3e50;">×</button>
                 <h3 style="color: #2c3e50; margin-bottom: 20px;">Menu Navigasi</h3>
                 <nav style="display: flex; flex-direction: column; gap: 10px;">
-                    <a href="index.html" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">🏠 Beranda</a>
-                    <a href="tentang-kami.html" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">ℹ️ Tentang Kami</a>
+                    <a href="#" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">🏠 Beranda</a>
+                    <a href="#tentang-kami" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">ℹ️ Tentang Kami</a>
                     <a href="#form-section" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">📝 Buat Pengaduan</a>
-                    <a href="download.html" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">📱 Download App</a>
-                    <a href="help.html" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">❓ Bantuan</a>
-                    <a href="help.html#kontak" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">📞 Kontak</a>
+                    <a href="#download" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">📱 Download App</a>
+                    <a href="#help" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">❓ Bantuan</a>
+                    <a href="#kontak" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">📞 Kontak</a>
                 </nav>
             `;
             
@@ -825,31 +829,24 @@
             const form = document.getElementById('complaint-form');
             const configModal = document.getElementById('config-modal');
             const modalClose = document.querySelector('.modal-close');
-            const useFormsubmitBtn = document.getElementById('use-formsubmit');
+            const closeConfigBtn = document.getElementById('close-config');
             
             const maxFiles = 5;
             const maxFileSize = 5 * 1024 * 1024; // 5MB
             let uploadedFiles = [];
-            let useFormSubmit = !emailConfigured; // Gunakan FormSubmit jika EmailJS tidak dikonfigurasi
             
-            // Tampilkan modal konfigurasi jika EmailJS tidak dikonfigurasi
-            if (!emailConfigured) {
-                setTimeout(() => {
-                    configModal.style.display = 'flex';
-                }, 2000);
+            // Tutup modal konfigurasi
+            if (modalClose) {
+                modalClose.addEventListener('click', function() {
+                    configModal.style.display = 'none';
+                });
             }
             
-            // Tutup modal
-            modalClose.addEventListener('click', function() {
-                configModal.style.display = 'none';
-            });
-            
-            // Gunakan FormSubmit
-            useFormsubmitBtn.addEventListener('click', function() {
-                useFormSubmit = true;
-                configModal.style.display = 'none';
-                showStatus('Sekarang menggunakan FormSubmit. File akan dikirim sebagai link unduh.', 'info');
-            });
+            if (closeConfigBtn) {
+                closeConfigBtn.addEventListener('click', function() {
+                    configModal.style.display = 'none';
+                });
+            }
             
             // Prevent default drag behaviors
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -989,47 +986,18 @@
                 }, 5000);
             }
             
-            // Handle form submission dengan EmailJS atau FormSubmit
+            // Handle form submission dengan EmailJS
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                if (useFormSubmit) {
-                    // Gunakan FormSubmit
-                    submitWithFormSubmit();
-                } else {
+                if (emailConfigured) {
                     // Gunakan EmailJS
                     submitWithEmailJS();
+                } else {
+                    // Fallback jika EmailJS tidak terkonfigurasi
+                    showStatus('Maaf, sistem pengaduan sedang dalam perbaikan. Silakan coba lagi nanti.', 'error');
                 }
             });
-            
-            function submitWithFormSubmit() {
-                // Update form action untuk FormSubmit
-                form.setAttribute('action', 'https://formsubmit.co/aduanmasyarakat5@gmail.com');
-                form.setAttribute('method', 'POST');
-                
-                // Tambahkan input tersembunyi untuk konfigurasi FormSubmit
-                const ccInput = document.createElement('input');
-                ccInput.type = 'hidden';
-                ccInput.name = '_cc';
-                ccInput.value = 'aduanmasyarakat5@gmail.com';
-                form.appendChild(ccInput);
-                
-                const subjectInput = document.createElement('input');
-                subjectInput.type = 'hidden';
-                subjectInput.name = '_subject';
-                subjectInput.value = 'Pengaduan Baru dari AduanMasyarakat';
-                form.appendChild(subjectInput);
-                
-                const templateInput = document.createElement('input');
-                templateInput.type = 'hidden';
-                templateInput.name = '_template';
-                templateInput.value = 'table';
-                form.appendChild(templateInput);
-                
-                // Kirim form
-                showStatus('Mengirim pengaduan...', 'info');
-                form.submit();
-            }
             
             function submitWithEmailJS() {
                 // Kumpulkan data dari form
@@ -1040,13 +1008,14 @@
                     location: document.getElementById('location').value,
                     category: document.getElementById('category').value,
                     description: document.getElementById('description').value,
-                    attachments: uploadedFiles.length > 0 ? `${uploadedFiles.length} file terlampir` : 'Tidak ada file'
+                    attachments: uploadedFiles.length > 0 ? `${uploadedFiles.length} file terlampir` : 'Tidak ada file',
+                    date: new Date().toLocaleString('id-ID')
                 };
                 
                 showStatus('Mengirim pengaduan...', 'info');
                 
                 // Kirim email menggunakan EmailJS
-                // Ganti SERVICE_ID dan TEMPLATE_ID dengan nilai yang sesuai dari dashboard EmailJS
+                // Menggunakan Service ID dan Template ID yang diberikan
                 emailjs.send('service_7kffbq9', 'template_1qiqw7s', formData)
                     .then(function(response) {
                         showStatus('Pengaduan berhasil dikirim! Kami akan segera menindaklanjuti.', 'success');
