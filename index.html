@@ -708,11 +708,40 @@
         </div>
     </footer>
 
+    <!-- Modal untuk informasi konfigurasi -->
+    <div class="modal" id="config-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Konfigurasi Email</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <p>Untuk menerima email pengaduan, Anda perlu melakukan konfigurasi:</p>
+            <ol>
+                <li>Daftar akun gratis di <a href="https://www.emailjs.com" target="_blank">EmailJS.com</a></li>
+                <li>Tambahkan service email (Gmail/Outlook)</li>
+                <li>Buat template email</li>
+                <li>Ganti PUBLIC_KEY, SERVICE_ID, dan TEMPLATE_ID di kode JavaScript</li>
+            </ol>
+            <p>Atau gunakan opsi alternatif dengan FormSubmit:</p>
+            <button id="use-formsubmit" class="btn">Gunakan FormSubmit</button>
+        </div>
+    </div>
+
     <!-- Script untuk EmailJS -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
         // Inisialisasi EmailJS dengan Service ID Anda
-        emailjs.init("YOUR_PUBLIC_KEY"); // Ganti dengan Public Key Anda dari EmailJS
+        // Ganti YOUR_PUBLIC_KEY dengan Public Key dari EmailJS
+        // Untuk demo, kita akan menggunakan FormSubmit sebagai fallback
+        let emailConfigured = false;
+        
+        try {
+            // Coba inisialisasi EmailJS - ganti dengan public key Anda
+            emailjs.init("_4hkLc3TPg40dv--Y");
+            emailConfigured = true;
+        } catch (e) {
+            console.log("EmailJS not configured. Using FormSubmit as fallback.");
+        }
 
         // Menu navigasi mobile
         document.querySelector('.nav-toggle').addEventListener('click', function() {
@@ -794,10 +823,33 @@
             const filePreviewContainer = document.getElementById('file-preview-container');
             const uploadStatus = document.getElementById('upload-status');
             const form = document.getElementById('complaint-form');
+            const configModal = document.getElementById('config-modal');
+            const modalClose = document.querySelector('.modal-close');
+            const useFormsubmitBtn = document.getElementById('use-formsubmit');
             
             const maxFiles = 5;
             const maxFileSize = 5 * 1024 * 1024; // 5MB
             let uploadedFiles = [];
+            let useFormSubmit = !emailConfigured; // Gunakan FormSubmit jika EmailJS tidak dikonfigurasi
+            
+            // Tampilkan modal konfigurasi jika EmailJS tidak dikonfigurasi
+            if (!emailConfigured) {
+                setTimeout(() => {
+                    configModal.style.display = 'flex';
+                }, 2000);
+            }
+            
+            // Tutup modal
+            modalClose.addEventListener('click', function() {
+                configModal.style.display = 'none';
+            });
+            
+            // Gunakan FormSubmit
+            useFormsubmitBtn.addEventListener('click', function() {
+                useFormSubmit = true;
+                configModal.style.display = 'none';
+                showStatus('Sekarang menggunakan FormSubmit. File akan dikirim sebagai link unduh.', 'info');
+            });
             
             // Prevent default drag behaviors
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -937,71 +989,76 @@
                 }, 5000);
             }
             
-            // Handle form submission dengan EmailJS
+            // Handle form submission dengan EmailJS atau FormSubmit
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                showStatus('Mengirim pengaduan...', 'info');
+                if (useFormSubmit) {
+                    // Gunakan FormSubmit
+                    submitWithFormSubmit();
+                } else {
+                    // Gunakan EmailJS
+                    submitWithEmailJS();
+                }
+            });
+            
+            function submitWithFormSubmit() {
+                // Update form action untuk FormSubmit
+                form.setAttribute('action', 'https://formsubmit.co/aduanmasyarakat5@gmail.com');
+                form.setAttribute('method', 'POST');
                 
-                // Prepare email parameters
-                const templateParams = {
-                    from_name: document.getElementById('name').value,
-                    from_email: document.getElementById('email').value,
-                    phone: document.getElementById('phone').value || 'Tidak diisi',
+                // Tambahkan input tersembunyi untuk konfigurasi FormSubmit
+                const ccInput = document.createElement('input');
+                ccInput.type = 'hidden';
+                ccInput.name = '_cc';
+                ccInput.value = 'aduanmasyarakat5@gmail.com';
+                form.appendChild(ccInput);
+                
+                const subjectInput = document.createElement('input');
+                subjectInput.type = 'hidden';
+                subjectInput.name = '_subject';
+                subjectInput.value = 'Pengaduan Baru dari AduanMasyarakat';
+                form.appendChild(subjectInput);
+                
+                const templateInput = document.createElement('input');
+                templateInput.type = 'hidden';
+                templateInput.name = '_template';
+                templateInput.value = 'table';
+                form.appendChild(templateInput);
+                
+                // Kirim form
+                showStatus('Mengirim pengaduan...', 'info');
+                form.submit();
+            }
+            
+            function submitWithEmailJS() {
+                // Kumpulkan data dari form
+                const formData = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
                     location: document.getElementById('location').value,
                     category: document.getElementById('category').value,
                     description: document.getElementById('description').value,
-                    attachments_count: uploadedFiles.length,
-                    to_email: 'aduanmasyarakat5@gmail.com'
+                    attachments: uploadedFiles.length > 0 ? `${uploadedFiles.length} file terlampir` : 'Tidak ada file'
                 };
                 
-                // Send email using EmailJS
-                emailjs.send('service_7kffbq9', 'YOUR_TEMPLATE_ID', templateParams)
+                showStatus('Mengirim pengaduan...', 'info');
+                
+                // Kirim email menggunakan EmailJS
+                // Ganti SERVICE_ID dan TEMPLATE_ID dengan nilai yang sesuai dari dashboard EmailJS
+                emailjs.send('service_7kffbq9', 'template_1qiqw7s', formData)
                     .then(function(response) {
                         showStatus('Pengaduan berhasil dikirim! Kami akan segera menindaklanjuti.', 'success');
                         form.reset();
                         filePreviewContainer.innerHTML = '';
                         uploadedFiles = [];
                     }, function(error) {
-                        showStatus('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
+                        showStatus('Maaf, terjadi kesalahan. Silakan coba lagi nanti.', 'error');
                         console.error('EmailJS Error:', error);
                     });
-            });
-        });
-
-        // Register Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('sw.js')
-                    .then(function(registration) {
-                        console.log('SW registered successfully with scope: ', registration.scope);
-                    })
-                    .catch(function(error) {
-                        console.log('SW registration failed: ', error);
-                    });
-            });
-        }
-
-        // Detect jika di standalone mode
-        if (window.matchMedia('(display-mode: standalone)').matches) {
-            console.log('Running as PWA');
-            document.body.classList.add('pwa-mode');
-        }
-
-        // Beforeinstallprompt event
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            console.log('PWA dapat diinstall');
-        });
-
-        // Tangkap error images
-        document.addEventListener('error', function(e) {
-            if (e.target.tagName === 'IMG') {
-                e.target.style.display = 'none';
             }
-        }, true);
+        });
     </script>
 </body>
 </html>
