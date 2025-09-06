@@ -127,12 +127,6 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
-        .btn:disabled {
-            background-color: #95a5a6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
         .features {
             padding: 40px 20px;
         }
@@ -341,13 +335,6 @@
             min-height: 100px;
         }
         
-        .error-message {
-            color: #e74c3c;
-            font-size: 14px;
-            margin-top: 5px;
-            display: none;
-        }
-        
         /* File Upload Styles */
         .file-upload-container {
             margin-bottom: 15px;
@@ -404,14 +391,6 @@
             margin-bottom: 5px;
         }
         
-        .file-preview img {
-            max-width: 50px;
-            max-height: 50px;
-            object-fit: cover;
-            margin-right: 10px;
-            border-radius: 4px;
-        }
-        
         .file-preview-icon {
             margin-right: 10px;
             color: #3498db;
@@ -460,22 +439,6 @@
             background-color: #cce5ff;
             color: #004085;
             display: block;
-        }
-        
-        .progress-bar {
-            height: 5px;
-            background-color: #ecf0f1;
-            border-radius: 5px;
-            margin-top: 10px;
-            overflow: hidden;
-            display: none;
-        }
-        
-        .progress-bar-inner {
-            height: 100%;
-            background-color: #3498db;
-            width: 0%;
-            transition: width 0.3s ease;
         }
         
         /* Modal Styles */
@@ -653,48 +616,41 @@
         <div class="container">
             <h2 class="section-title">Buat Pengaduan Baru</h2>
             <div class="form-container">
-                <!-- Ganti action form dengan URL Google Forms Anda -->
-                <form id="complaint-form" action="https://docs.google.com/forms/d/e/1FAIpQLSe..../formResponse" method="POST" target="hiddenFrame">
+                <form id="complaint-form">
                   <div class="form-group">
                     <label for="name">Nama Lengkap</label>
-                    <input type="text" id="name" name="entry.123456789" required>
-                    <div class="error-message" id="name-error">Nama lengkap harus diisi</div>
+                    <input type="text" id="name" name="name" required>
                   </div>
                   
                   <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="entry.987654321" required>
-                    <div class="error-message" id="email-error">Email harus valid</div>
+                    <input type="email" id="email" name="email" required>
                   </div>
                   
                   <div class="form-group">
                     <label for="phone">Nomor Telepon</label>
-                    <input type="tel" id="phone" name="entry.123459876">
-                    <div class="error-message" id="phone-error">Format nomor telepon tidak valid</div>
+                    <input type="tel" id="phone" name="phone">
                   </div>
                   
                   <div class="form-group">
                     <label for="location">Lokasi Kejadian</label>
-                    <input type="text" id="location" name="entry.543216789" required>
-                    <div class="error-message" id="location-error">Lokasi harus diisi</div>
+                    <input type="text" id="location" name="location" required>
                   </div>
                   
                   <div class="form-group">
                     <label for="category">Kategori Pengaduan</label>
-                    <select id="category" name="entry.112233445" required>
+                    <select id="category" name="category" required>
                       <option value="">Pilih Kategori</option>
                       <option value="infrastruktur">Infrastruktur (Jalan, Jembatan)</option>
                       <option value="kebersihan">Kebersihan (Sampah, Selokan)</option>
                       <option value="keamanan">Keamanan (Lampu Jalan, Patroli)</option>
                       <option value="lainnya">Lainnya</option>
                     </select>
-                    <div class="error-message" id="category-error">Kategori harus dipilih</div>
                   </div>
                   
                   <div class="form-group">
                     <label for="description">Deskripsi Pengaduan</label>
-                    <textarea id="description" name="entry.556677889" required></textarea>
-                    <div class="error-message" id="description-error">Deskripsi harus diisi</div>
+                    <textarea id="description" name="description" required></textarea>
                   </div>
                   
                   <!-- File Upload Section -->
@@ -707,20 +663,16 @@
                         <i class="fas fa-cloud-upload-alt" style="font-size: 24px; margin-bottom: 10px; color: #3498db;"></i>
                         <p>Seret file ke sini atau klik untuk memilih</p>
                         <div class="file-upload-button">Pilih File</div>
-                        <input type="file" id="file-input" name="entry.998877665" multiple accept="image/*,.pdf,.doc,.docx" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+                        <input type="file" id="file-input" name="attachments" multiple accept="image/*,.pdf,.doc,.docx" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
                       </div>
                     </div>
                     
                     <div class="file-preview-container" id="file-preview-container"></div>
-                    <div class="progress-bar" id="progress-bar">
-                        <div class="progress-bar-inner" id="progress-bar-inner"></div>
-                    </div>
                     <div class="upload-status" id="upload-status"></div>
                   </div>
                   
-                  <button type="submit" class="btn" id="submit-button">Kirim Pengaduan</button>
+                  <button type="submit" class="btn">Kirim Pengaduan</button>
                 </form>
-                <iframe name="hiddenFrame" style="display: none;"></iframe>
             </div>
         </div>
     </section>
@@ -760,25 +712,40 @@
     <div class="modal" id="config-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Konfigurasi Form</h3>
+                <h3>Konfigurasi Email</h3>
                 <button class="modal-close">&times;</button>
             </div>
-            <p>Form telah dikonfigurasi dengan Google Forms untuk menerima pengaduan.</p>
-            <p>Sistem siap menerima pengaduan dengan lampiran file.</p>
+            <p>EmailJS telah dikonfigurasi dengan kunci berikut:</p>
+            <ul>
+                <li>Public Key: _4hkLc3TPg40dv--Y</li>
+                <li>Service ID: service_7kffbq9</li>
+                <li>Template ID: template_1qiqw7s</li>
+            </ul>
+            <p>Sistem siap menerima pengaduan melalui email.</p>
             <button id="close-config" class="btn">Mengerti</button>
         </div>
     </div>
 
+    <!-- Script untuk EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
-        // Inisialisasi variabel global
-        let uploadedFiles = [];
-        const maxFiles = 5;
-        const maxFileSize = 5 * 1024 * 1024; // 5MB
+        // Inisialisasi EmailJS dengan Service ID Anda
+        // Menggunakan Public Key, Service ID, dan Template ID yang diberikan
+        let emailConfigured = true;
         
-        // Tampilkan modal konfigurasi
-        setTimeout(() => {
-            document.getElementById('config-modal').style.display = 'flex';
-        }, 2000);
+        try {
+            // Inisialisasi EmailJS dengan Public Key yang diberikan
+            emailjs.init("_4hkLc3TPg40dv--Y");
+            emailConfigured = true;
+            
+            // Tampilkan modal konfigurasi
+            setTimeout(() => {
+                document.getElementById('config-modal').style.display = 'flex';
+            }, 2000);
+        } catch (e) {
+            console.log("EmailJS initialization error:", e);
+            emailConfigured = false;
+        }
 
         // Menu navigasi mobile
         document.querySelector('.nav-toggle').addEventListener('click', function() {
@@ -859,13 +826,14 @@
             const fileDropArea = document.getElementById('file-drop-area');
             const filePreviewContainer = document.getElementById('file-preview-container');
             const uploadStatus = document.getElementById('upload-status');
-            const progressBar = document.getElementById('progress-bar');
-            const progressBarInner = document.getElementById('progress-bar-inner');
             const form = document.getElementById('complaint-form');
             const configModal = document.getElementById('config-modal');
             const modalClose = document.querySelector('.modal-close');
             const closeConfigBtn = document.getElementById('close-config');
-            const submitButton = document.getElementById('submit-button');
+            
+            const maxFiles = 5;
+            const maxFileSize = 5 * 1024 * 1024; // 5MB
+            let uploadedFiles = [];
             
             // Tutup modal konfigurasi
             if (modalClose) {
@@ -879,9 +847,6 @@
                     configModal.style.display = 'none';
                 });
             }
-            
-            // Validasi form
-            setupFormValidation();
             
             // Prevent default drag behaviors
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -903,62 +868,6 @@
             
             // Handle selected files from input
             fileInput.addEventListener('change', handleFiles, false);
-            
-            // Handle form submission
-            form.addEventListener('submit', handleFormSubmit);
-            
-            function setupFormValidation() {
-                const nameInput = document.getElementById('name');
-                const emailInput = document.getElementById('email');
-                const phoneInput = document.getElementById('phone');
-                const locationInput = document.getElementById('location');
-                const categoryInput = document.getElementById('category');
-                const descriptionInput = document.getElementById('description');
-                
-                nameInput.addEventListener('blur', () => validateField(nameInput, 'name-error', value => value.trim() !== ''));
-                emailInput.addEventListener('blur', () => validateField(emailInput, 'email-error', validateEmail));
-                phoneInput.addEventListener('blur', () => validateField(phoneInput, 'phone-error', validatePhone));
-                locationInput.addEventListener('blur', () => validateField(locationInput, 'location-error', value => value.trim() !== ''));
-                categoryInput.addEventListener('change', () => validateField(categoryInput, 'category-error', value => value !== ''));
-                descriptionInput.addEventListener('blur', () => validateField(descriptionInput, 'description-error', value => value.trim() !== ''));
-            }
-            
-            function validateField(field, errorId, validationFn) {
-                const errorElement = document.getElementById(errorId);
-                const isValid = validationFn(field.value);
-                
-                if (!isValid) {
-                    errorElement.style.display = 'block';
-                    field.style.borderColor = '#e74c3c';
-                    return false;
-                } else {
-                    errorElement.style.display = 'none';
-                    field.style.borderColor = '#ddd';
-                    return true;
-                }
-            }
-            
-            function validateEmail(email) {
-                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return re.test(email);
-            }
-            
-            function validatePhone(phone) {
-                if (!phone) return true; // Phone is optional
-                const re = /^[\+]?[0-9]{8,15}$/;
-                return re.test(phone.replace(/\s/g, ''));
-            }
-            
-            function validateForm() {
-                const nameValid = validateField(document.getElementById('name'), 'name-error', value => value.trim() !== '');
-                const emailValid = validateField(document.getElementById('email'), 'email-error', validateEmail);
-                const phoneValid = validateField(document.getElementById('phone'), 'phone-error', validatePhone);
-                const locationValid = validateField(document.getElementById('location'), 'location-error', value => value.trim() !== '');
-                const categoryValid = validateField(document.getElementById('category'), 'category-error', value => value !== '');
-                const descriptionValid = validateField(document.getElementById('description'), 'description-error', value => value.trim() !== '');
-                
-                return nameValid && emailValid && phoneValid && locationValid && categoryValid && descriptionValid;
-            }
             
             function preventDefaults(e) {
                 e.preventDefault();
@@ -1022,25 +931,20 @@
                     preview.className = 'file-preview';
                     
                     let iconClass = 'fa-file';
-                    let previewContent = '';
-                    
                     if (file.type.includes('image')) {
                         iconClass = 'fa-file-image';
-                        previewContent = `<img src="${reader.result}" alt="Preview">`;
                     } else if (file.type.includes('pdf')) {
                         iconClass = 'fa-file-pdf';
-                        previewContent = `<div class="file-preview-icon"><i class="fas ${iconClass}"></i></div>`;
                     } else if (file.type.includes('word')) {
                         iconClass = 'fa-file-word';
-                        previewContent = `<div class="file-preview-icon"><i class="fas ${iconClass}"></i></div>`;
-                    } else {
-                        previewContent = `<div class="file-preview-icon"><i class="fas ${iconClass}"></i></div>`;
                     }
                     
                     const fileSize = formatFileSize(file.size);
                     
                     preview.innerHTML = `
-                        ${previewContent}
+                        <div class="file-preview-icon">
+                            <i class="fas ${iconClass}"></i>
+                        </div>
                         <div class="file-preview-info">
                             <div class="file-preview-name">${file.name}</div>
                             <div class="file-preview-size">${fileSize}</div>
@@ -1077,62 +981,51 @@
             function showStatus(message, type) {
                 uploadStatus.textContent = message;
                 uploadStatus.className = 'upload-status ' + type;
-                
-                if (type !== 'info') {
-                    setTimeout(() => {
-                        uploadStatus.className = 'upload-status';
-                        uploadStatus.textContent = '';
-                    }, 5000);
-                }
+                setTimeout(() => {
+                    uploadStatus.className = 'upload-status';
+                }, 5000);
             }
             
-            function handleFormSubmit(e) {
+            // Handle form submission dengan EmailJS
+            form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                // Validasi form
-                if (!validateForm()) {
-                    showStatus('Harap perbaiki kesalahan dalam form sebelum mengirim.', 'error');
-                    return;
+                if (emailConfigured) {
+                    // Gunakan EmailJS
+                    submitWithEmailJS();
+                } else {
+                    // Fallback jika EmailJS tidak terkonfigurasi
+                    showStatus('Maaf, sistem pengaduan sedang dalam perbaikan. Silakan coba lagi nanti.', 'error');
                 }
-                
-                // Nonaktifkan tombol submit
-                submitButton.disabled = true;
-                submitButton.textContent = 'Mengirim...';
+            });
+            
+            function submitWithEmailJS() {
+                // Kumpulkan data dari form
+                const formData = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    location: document.getElementById('location').value,
+                    category: document.getElementById('category').value,
+                    description: document.getElementById('description').value,
+                    attachments: uploadedFiles.length > 0 ? `${uploadedFiles.length} file terlampir` : 'Tidak ada file',
+                    date: new Date().toLocaleString('id-ID')
+                };
                 
                 showStatus('Mengirim pengaduan...', 'info');
                 
-                // Simulasi pengiriman data (dalam implementasi nyata, ini akan mengirim ke Google Forms)
-                simulateSubmission();
-            }
-            
-            function simulateSubmission() {
-                progressBar.style.display = 'block';
-                
-                let progress = 0;
-                const interval = setInterval(() => {
-                    progress += 5;
-                    progressBarInner.style.width = `${progress}%`;
-                    
-                    if (progress >= 100) {
-                        clearInterval(interval);
-                        
-                        // Simulasi keberhasilan pengiriman
-                        setTimeout(() => {
-                            showStatus('Pengaduan berhasil dikirim! Kami akan segera menindaklanjuti.', 'success');
-                            form.reset();
-                            filePreviewContainer.innerHTML = '';
-                            uploadedFiles = [];
-                            progressBar.style.display = 'none';
-                            
-                            // Reset tombol submit
-                            submitButton.disabled = false;
-                            submitButton.textContent = 'Kirim Pengaduan';
-                            
-                            // Tampilkan notifikasi sukses
-                            alert('Terima kasih! Pengaduan Anda telah berhasil dikirim. Kami akan menindaklanjuti secepatnya.');
-                        }, 500);
-                    }
-                }, 100);
+                // Kirim email menggunakan EmailJS
+                // Menggunakan Service ID dan Template ID yang diberikan
+                emailjs.send('service_7kffbq9', 'template_1qiqw7s', formData)
+                    .then(function(response) {
+                        showStatus('Pengaduan berhasil dikirim! Kami akan segera menindaklanjuti.', 'success');
+                        form.reset();
+                        filePreviewContainer.innerHTML = '';
+                        uploadedFiles = [];
+                    }, function(error) {
+                        showStatus('Maaf, terjadi kesalahan. Silakan coba lagi nanti.', 'error');
+                        console.error('EmailJS Error:', error);
+                    });
             }
         });
     </script>
