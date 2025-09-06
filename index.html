@@ -83,6 +83,9 @@
             cursor: pointer;
             min-width: 44px;
             min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .hero {
@@ -105,6 +108,7 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            line-height: 1.5;
         }
         
         .btn {
@@ -119,9 +123,10 @@
             border: none;
             cursor: pointer;
             min-height: 44px;
+            line-height: 1.2;
         }
         
-        .btn:hover {
+        .btn:hover, .btn:focus {
             background-color: #c0392b;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -150,6 +155,11 @@
             padding: 20px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
         }
         
         .feature-card i {
@@ -161,6 +171,10 @@
         .feature-card h3 {
             margin-bottom: 10px;
             color: #2c3e50;
+        }
+        
+        .feature-card p {
+            line-height: 1.5;
         }
         
         .app-screenshot {
@@ -212,6 +226,7 @@
         .complaint-item p {
             font-size: 14px;
             color: #7f8c8d;
+            line-height: 1.4;
         }
         
         .status {
@@ -260,7 +275,7 @@
             min-height: 44px;
         }
         
-        .download-btn:hover {
+        .download-btn:hover, .download-btn:focus {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
@@ -295,10 +310,13 @@
             text-decoration: none;
             transition: color 0.3s ease;
             padding: 5px 10px;
+            border-radius: 4px;
         }
         
-        .footer-links a:hover {
+        .footer-links a:hover, .footer-links a:focus {
             color: #3498db;
+            background-color: rgba(255, 255, 255, 0.1);
+            outline: none;
         }
         
         /* Form Styles */
@@ -329,10 +347,20 @@
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
         }
         
         .form-group textarea {
             min-height: 100px;
+            resize: vertical;
         }
         
         /* File Upload Styles */
@@ -362,9 +390,10 @@
             transition: all 0.3s ease;
         }
         
-        .file-upload-input:hover {
+        .file-upload-input:hover, .file-upload-input:focus {
             background-color: #e8f4fc;
             border-color: #2980b9;
+            outline: none;
         }
         
         .file-upload-button {
@@ -376,6 +405,7 @@
             cursor: pointer;
             margin-top: 5px;
             font-size: 14px;
+            border: none;
         }
         
         .file-preview-container {
@@ -398,11 +428,15 @@
         
         .file-preview-info {
             flex-grow: 1;
+            overflow: hidden;
         }
         
         .file-preview-name {
             font-size: 14px;
             margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .file-preview-size {
@@ -414,6 +448,9 @@
             color: #e74c3c;
             cursor: pointer;
             padding: 5px;
+            background: none;
+            border: none;
+            font-size: 16px;
         }
         
         /* Toast Notification */
@@ -429,6 +466,7 @@
             opacity: 0;
             transition: opacity 0.3s;
             max-width: 300px;
+            pointer-events: none;
         }
         
         .toast.show {
@@ -441,6 +479,22 @@
         
         .toast.error {
             background-color: #e74c3c;
+        }
+        
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         /* PWA Specific Styles */
@@ -465,6 +519,22 @@
             input, textarea, select {
                 font-size: 16px !important;
             }
+            
+            .feature-grid {
+                gap: 15px;
+            }
+            
+            .feature-card {
+                padding: 15px;
+            }
+            
+            .hero {
+                padding: 30px 15px;
+            }
+            
+            .hero h2 {
+                font-size: 22px;
+            }
         }
 
         /* Safe area insets for notch phones */
@@ -484,9 +554,28 @@
                 font-size: 32px;
             }
         }
+
+        /* Skip to content link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #e74c3c;
+            color: white;
+            padding: 8px;
+            z-index: 1000;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
     </style>
 </head>
 <body>
+    <!-- Skip link for accessibility -->
+    <a href="#main-content" class="skip-link">Langsung ke konten utama</a>
+
     <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
 
@@ -494,176 +583,183 @@
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    <i class="fas fa-house-damage"></i>
+                    <i class="fas fa-house-damage" aria-hidden="true"></i>
                     <h1>AduanMasyarakat</h1>
                 </div>
-                <button class="nav-toggle">
+                <button class="nav-toggle" aria-label="Buka menu navigasi">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
         </div>
     </header>
 
-    <section class="hero">
-        <div class="container">
-            <h2>Laporkan masalah Anda dengan mudah dan cepat</h2>
-            <p>Aplikasi pengaduan masyarakat real-time yang memudahkan Anda melaporkan masalah di lingkungan sekitar dan melacak status pengaduannya.</p>
-            <a href="#download" class="btn">Download Sekarang</a>
-        </div>
-    </section>
+    <main id="main-content">
+        <section class="hero">
+            <div class="container">
+                <h2>Laporkan masalah Anda dengan mudah dan cepat</h2>
+                <p>Aplikasi pengaduan masyarakat real-time yang memudahkan Anda melaporkan masalah di lingkungan sekitar dan melacak status pengaduannya.</p>
+                <a href="#download" class="btn">Download Sekarang</a>
+            </div>
+        </section>
 
-    <section class="features">
-        <div class="container">
-            <h2 class="section-title">Fitur Unggulan</h2>
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <i class="fas fa-bullhorn"></i>
-                    <h3>Laporan Real-Time</h3>
-                    <p>Kirim laporan dan dapatkan respon langsung dari instansi terkait</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-map-marked-alt"></i>
-                    <h3>Lokasi Presisi</h3>
-                    <p>Tentukan lokasi kejadian dengan akurat menggunakan GPS</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-history"></i>
-                    <h3>Lacak Status</h3>
-                    <p>Pantau perkembangan laporan Anda dari waktu ke waktu</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-camera"></i>
-                    <h3>Lampiran Foto</h3>
-                    <p>Sertakan foto sebagai bukti untuk memperkuat laporan</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-shield-alt"></i>
-                    <h3>Privasi Terjaga</h3>
-                    <p>Laporkan secara anonim atau dengan identitas yang terlindungi</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-bell"></i>
-                    <h3>Notifikasi</h3>
-                    <p>Dapatkan pemberitahuan ketika ada update pada laporan Anda</p>
+        <section class="features">
+            <div class="container">
+                <h2 class="section-title">Fitur Unggulan</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-bullhorn" aria-hidden="true"></i>
+                        <h3>Laporan Real-Time</h3>
+                        <p>Kirim laporan dan dapatkan respon langsung dari instansi terkait</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+                        <h3>Lokasi Presisi</h3>
+                        <p>Tentukan lokasi kejadian dengan akurat menggunakan GPS</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-history" aria-hidden="true"></i>
+                        <h3>Lacak Status</h3>
+                        <p>Pantau perkembangan laporan Anda dari waktu ke waktu</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-camera" aria-hidden="true"></i>
+                        <h3>Lampiran Foto</h3>
+                        <p>Sertakan foto sebagai bukti untuk memperkuat laporan</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                        <h3>Privasi Terjaga</h3>
+                        <p>Laporkan secara anonim atau dengan identitas yang terlindungi</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-bell" aria-hidden="true"></i>
+                        <h3>Notifikasi</h3>
+                        <p>Dapatkan pemberitahuan ketika ada update pada laporan Anda</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section class="app-screenshot">
-        <div class="container">
-            <h2 class="section-title">Tampilan Aplikasi</h2>
-            <div class="screenshot-container">
-                <div class="phone-mockup">
-                    <div class="phone-content">
-                        <div class="screen-content">
-                            <h3 style="text-align: center; margin-bottom: 15px; color: #2c3e50;">Daftar Pengaduan</h3>
-                            
-                            <div id="complaints-container">
-                                <!-- Data akan diisi otomatis -->
-                                <div style="text-align: center; padding: 40px; color: #7f8c8d;">
-                                    <i class="fas fa-inbox" style="font-size: 40px; margin-bottom: 15px;"></i>
-                                    <p>Belum ada pengaduan</p>
-                                    <p>Jadilah yang pertama melaporkan</p>
+        <section class="app-screenshot">
+            <div class="container">
+                <h2 class="section-title">Tampilan Aplikasi</h2>
+                <div class="screenshot-container">
+                    <div class="phone-mockup">
+                        <div class="phone-content">
+                            <div class="screen-content">
+                                <h3 style="text-align: center; margin-bottom: 15px; color: #2c3e50;">Daftar Pengaduan</h3>
+                                
+                                <div id="complaints-container">
+                                    <!-- Data akan diisi otomatis -->
+                                    <div style="text-align: center; padding: 40px; color: #7f8c8d;">
+                                        <i class="fas fa-inbox" style="font-size: 40px; margin-bottom: 15px;"></i>
+                                        <p>Belum ada pengaduan</p>
+                                        <p>Jadilah yang pertama melaporkan</p>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div style="position: absolute; bottom: 20px; right: 20px;">
-                                <button class="btn" style="border-radius: 50%; width: 50px; height: 50px; padding: 0;">
-                                    <i class="fas fa-plus"></i>
-                                </button>
+                                
+                                <div style="position: absolute; bottom: 20px; right: 20px;">
+                                    <button class="btn" style="border-radius: 50%; width: 50px; height: 50px; padding: 0;" aria-label="Buat pengaduan baru">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="form-section" style="padding: 40px 20px;">
-        <div class="container">
-            <h2 class="section-title">Buat Pengaduan Baru</h2>
-            <div class="form-container">
-                <form action="https://formspree.io/f/xdklpyyj" method="POST" enctype="multipart/form-data" id="complaint-form">
-                  <input type="hidden" name="_subject" value="Pengaduan Baru dari Website">
-                  <input type="hidden" name="_replyto" value="aduanmasyarakat5@gmail.com">
-                  
-                  <div class="form-group">
-                    <label for="name">Nama Lengkap</label>
-                    <input type="text" id="name" name="name" required>
-                  </div>
-                  
-                  <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
-                  </div>
-                  
-                  <div class="form-group">
-                    <label for="phone">Nomor Telepon</label>
-                    <input type="tel" id="phone" name="phone">
-                  </div>
-                  
-                  <div class="form-group">
-                    <label for="location">Lokasi Kejadian</label>
-                    <input type="text" id="location" name="location" required>
-                  </div>
-                  
-                  <div class="form-group">
-                    <label for="category">Kategori Pengaduan</label>
-                    <select id="category" name="category" required>
-                      <option value="">Pilih Kategori</option>
-                      <option value="infrastruktur">Infrastruktur (Jalan, Jembatan)</option>
-                      <option value="kebersihan">Kebersihan (Sampah, Selokan)</option>
-                      <option value="keamanan">Keamanan (Lampu Jalan, Patroli)</option>
-                      <option value="lainnya">Lainnya</option>
-                    </select>
-                  </div>
-                  
-                  <div class="form-group">
-                    <label for="description">Deskripsi Pengaduan</label>
-                    <textarea id="description" name="description" required></textarea>
-                  </div>
-                  
-                  <!-- File Upload Section - NEW -->
-                  <div class="file-upload-container">
-                    <label class="file-upload-label">Unggah Bukti (Foto/Dokumen)</label>
-                    <p style="font-size: 12px; color: #7f8c8d; margin-bottom: 10px;">Unggah foto atau dokumen pendukung (Maksimal 5 file, 5MB per file)</p>
-                    
-                    <div class="file-upload-wrapper">
-                      <div class="file-upload-input" id="file-drop-area">
-                        <i class="fas fa-cloud-upload-alt" style="font-size: 24px; margin-bottom: 10px; color: #3498db;"></i>
-                        <p>Seret file ke sini atau klik untuk memilih</p>
-                        <div class="file-upload-button">Pilih File</div>
-                        <input type="file" id="file-input" name="attachments" multiple accept="image/*,.pdf,.doc,.docx" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+        <section id="form-section" style="padding: 40px 20px;">
+            <div class="container">
+                <h2 class="section-title">Buat Pengaduan Baru</h2>
+                <div class="form-container">
+                    <form action="https://formspree.io/f/mwpnwrzk" method="POST" enctype="multipart/form-data" id="complaint-form">
+                      <input type="hidden" name="_subject" value="Pengaduan Baru dari Website">
+                      <input type="hidden" name="_replyto" value="aduanmasyarakat5@gmail.com">
+                      <input type="hidden" name="_format" value="plain">
+                      <input type="text" name="_gotcha" style="display:none">
+                      
+                      <div class="form-group">
+                        <label for="name">Nama Lengkap *</label>
+                        <input type="text" id="name" name="name" required aria-required="true">
                       </div>
-                    </div>
-                    
-                    <div class="file-preview-container" id="file-preview-container"></div>
-                  </div>
-                  
-                  <button type="submit" class="btn">Kirim Pengaduan</button>
-                </form>
+                      
+                      <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required aria-required="true">
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="phone">Nomor Telepon</label>
+                        <input type="tel" id="phone" name="phone">
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="location">Lokasi Kejadian *</label>
+                        <input type="text" id="location" name="location" required aria-required="true">
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="category">Kategori Pengaduan *</label>
+                        <select id="category" name="category" required aria-required="true">
+                          <option value="">Pilih Kategori</option>
+                          <option value="infrastruktur">Infrastruktur (Jalan, Jembatan)</option>
+                          <option value="kebersihan">Kebersihan (Sampah, Selokan)</option>
+                          <option value="keamanan">Keamanan (Lampu Jalan, Patroli)</option>
+                          <option value="lainnya">Lainnya</option>
+                        </select>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="description">Deskripsi Pengaduan *</label>
+                        <textarea id="description" name="description" required aria-required="true"></textarea>
+                      </div>
+                      
+                      <!-- File Upload Section - NEW -->
+                      <div class="file-upload-container">
+                        <label class="file-upload-label">Unggah Bukti (Foto/Dokumen)</label>
+                        <p style="font-size: 12px; color: #7f8c8d; margin-bottom: 10px;">Unggah foto atau dokumen pendukung (Maksimal 5 file, 5MB per file)</p>
+                        
+                        <div class="file-upload-wrapper">
+                          <div class="file-upload-input" id="file-drop-area">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 24px; margin-bottom: 10px; color: #3498db;"></i>
+                            <p>Seret file ke sini atau klik untuk memilih</p>
+                            <button type="button" class="file-upload-button">Pilih File</button>
+                            <input type="file" id="file-input" name="attachments" multiple accept="image/*,.pdf,.doc,.docx" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" aria-label="Unggah file pendukung">
+                          </div>
+                        </div>
+                        
+                        <div class="file-preview-container" id="file-preview-container"></div>
+                      </div>
+                      
+                      <button type="submit" class="btn" id="submit-button">
+                        <span id="submit-text">Kirim Pengaduan</span>
+                        <span id="submit-loading" style="display: none;"><span class="spinner"></span> Mengirim...</span>
+                      </button>
+                    </form>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="download" class="download-section">
-        <div class="container">
-            <h2 class="section-title">Download Aplikasi Sekarang</h2>
-            <p>Unduh aplikasi AduanMasyarakat secara gratis di platform Android</p>
-            <div class="download-buttons">
-                <a href="download.html" class="download-btn">
-                    <i class="fab fa-google-play"></i>
-                    <span>Download App</span>
-                </a>
+        <section id="download" class="download-section">
+            <div class="container">
+                <h2 class="section-title">Download Aplikasi Sekarang</h2>
+                <p>Unduh aplikasi AduanMasyarakat secara gratis di platform Android</p>
+                <div class="download-buttons">
+                    <a href="download.html" class="download-btn">
+                        <i class="fab fa-google-play"></i>
+                        <span>Download App</span>
+                    </a>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
     <footer>
         <div class="footer-content">
             <div class="logo" style="justify-content: center;">
-                <i class="fas fa-house-damage"></i>
+                <i class="fas fa-house-damage" aria-hidden="true"></i>
                 <h1>AduanMasyarakat</h1>
             </div>
             <p>Aplikasi layanan pengaduan masyarakat terpercaya sejak 2025</p>
@@ -698,15 +794,15 @@
             `;
             
             modal.innerHTML = `
-                <button style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 20px; color: #2c3e50;">×</button>
+                <button style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 20px; color: #2c3e50; min-width: 44px; min-height: 44px;" aria-label="Tutup menu">×</button>
                 <h3 style="color: #2c3e50; margin-bottom: 20px;">Menu Navigasi</h3>
                 <nav style="display: flex; flex-direction: column; gap: 10px;">
-                    <a href="index.html" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">🏠 Beranda</a>
-                    <a href="tentang-kami.html" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">ℹ️ Tentang Kami</a>
-                    <a href="#form-section" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">📝 Buat Pengaduan</a>
-                    <a href="download.html" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">📱 Download App</a>
-                    <a href="help.html" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">❓ Bantuan</a>
-                    <a href="help.html#kontak" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s;">📞 Kontak</a>
+                    <a href="index.html" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s; min-height: 44px; display: flex; align-items: center;">🏠 Beranda</a>
+                    <a href="tentang-kami.html" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s; min-height: 44px; display: flex; align-items: center;">ℹ️ Tentang Kami</a>
+                    <a href="#form-section" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s; min-height: 44px; display: flex; align-items: center;">📝 Buat Pengaduan</a>
+                    <a href="download.html" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s; min-height: 44px; display: flex; align-items: center;">📱 Download App</a>
+                    <a href="help.html" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s; min-height: 44px; display: flex; align-items: center;">❓ Bantuan</a>
+                    <a href="help.html#kontak" style="color: #2c3e50; text-decoration: none; padding: 12px; border-radius: 5px; transition: background 0.3s; min-height: 44px; display: flex; align-items: center;">📞 Kontak</a>
                 </nav>
             `;
             
@@ -714,6 +810,34 @@
             
             // Animate in
             setTimeout(() => modal.style.transform = 'translateX(0)', 10);
+            
+            // Focus trap for accessibility
+            const focusableElements = modal.querySelectorAll('a, button');
+            const firstFocusable = focusableElements[0];
+            const lastFocusable = focusableElements[focusableElements.length - 1];
+            
+            firstFocusable.focus();
+            
+            modal.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    if (e.shiftKey) {
+                        if (document.activeElement === firstFocusable) {
+                            e.preventDefault();
+                            lastFocusable.focus();
+                        }
+                    } else {
+                        if (document.activeElement === lastFocusable) {
+                            e.preventDefault();
+                            firstFocusable.focus();
+                        }
+                    }
+                }
+                
+                if (e.key === 'Escape') {
+                    modal.style.transform = 'translateX(100%)';
+                    setTimeout(() => modal.remove(), 300);
+                }
+            });
             
             // Close button
             modal.querySelector('button').addEventListener('click', function() {
@@ -757,9 +881,15 @@
             const fileInput = document.getElementById('file-input');
             const fileDropArea = document.getElementById('file-drop-area');
             const filePreviewContainer = document.getElementById('file-preview-container');
+            const fileUploadButton = document.querySelector('.file-upload-button');
             const maxFiles = 5;
             const maxFileSize = 5 * 1024 * 1024; // 5MB
             let uploadedFiles = [];
+            
+            // Trigger file input when button is clicked
+            fileUploadButton.addEventListener('click', function() {
+                fileInput.click();
+            });
             
             // Prevent default drag behaviors
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -807,7 +937,7 @@
                 const files = e.target.files;
                 
                 if (uploadedFiles.length + files.length > maxFiles) {
-                    alert(`Maksimal ${maxFiles} file yang dapat diunggah.`);
+                    showToast(`Maksimal ${maxFiles} file yang dapat diunggah.`, 'error');
                     return;
                 }
                 
@@ -816,14 +946,14 @@
                     
                     // Validate file size
                     if (file.size > maxFileSize) {
-                        alert(`File ${file.name} terlalu besar. Maksimal ukuran file adalah 5MB.`);
+                        showToast(`File ${file.name} terlalu besar. Maksimal ukuran file adalah 5MB.`, 'error');
                         continue;
                     }
                     
                     // Validate file type
                     const validFileTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
                     if (!validFileTypes.includes(file.type)) {
-                        alert(`File ${file.name} memiliki tipe yang tidak didukung. Hanya gambar, PDF, dan dokumen Word yang diperbolehkan.`);
+                        showToast(`File ${file.name} memiliki tipe yang tidak didukung. Hanya gambar, PDF, dan dokumen Word yang diperbolehkan.`, 'error');
                         continue;
                     }
                     
@@ -859,12 +989,12 @@
                             <i class="fas ${iconClass}"></i>
                         </div>
                         <div class="file-preview-info">
-                            <div class="file-preview-name">${file.name}</div>
+                            <div class="file-preview-name">${escapeHtml(file.name)}</div>
                             <div class="file-preview-size">${fileSize}</div>
                         </div>
-                        <div class="file-preview-remove" data-filename="${file.name}">
+                        <button class="file-preview-remove" data-filename="${escapeHtml(file.name)}" aria-label="Hapus file">
                             <i class="fas fa-times"></i>
-                        </div>
+                        </button>
                     `;
                     
                     filePreviewContainer.appendChild(preview);
@@ -889,6 +1019,15 @@
                 const sizes = ['Bytes', 'KB', 'MB', 'GB'];
                 const i = Math.floor(Math.log(bytes) / Math.log(k));
                 return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            function escapeHtml(unsafe) {
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
             }
             
             // Fungsi untuk menampilkan toast notification
@@ -956,8 +1095,8 @@
                     
                     complaintsHTML += `
                         <div class="complaint-item">
-                            <h4>${complaint.category}</h4>
-                            <p>${complaint.description.substring(0, 60)}${complaint.description.length > 60 ? '...' : ''}</p>
+                            <h4>${escapeHtml(complaint.category)}</h4>
+                            <p>${escapeHtml(complaint.description.substring(0, 60))}${complaint.description.length > 60 ? '...' : ''}</p>
                             <p><small>${date}</small></p>
                             <span class="status ${statusClass}">${statusText}</span>
                         </div>
@@ -969,8 +1108,35 @@
             
             // Update form submission untuk menyimpan data ke localStorage
             const form = document.getElementById('complaint-form');
+            const submitButton = document.getElementById('submit-button');
+            const submitText = document.getElementById('submit-text');
+            const submitLoading = document.getElementById('submit-loading');
+            
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
+                
+                // Validasi form
+                const requiredFields = form.querySelectorAll('[required]');
+                let isValid = true;
+                
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        field.style.borderColor = '#e74c3c';
+                        isValid = false;
+                    } else {
+                        field.style.borderColor = '#ddd';
+                    }
+                });
+                
+                if (!isValid) {
+                    showToast('Harap isi semua field yang wajib diisi.', 'error');
+                    return;
+                }
+                
+                // Tampilkan loading state
+                submitText.style.display = 'none';
+                submitLoading.style.display = 'inline';
+                submitButton.disabled = true;
                 
                 // Ambil data dari form
                 const formData = new FormData(form);
@@ -989,15 +1155,10 @@
                 // Perbarui tampilan daftar pengaduan
                 displayComplaints();
                 
-                // Tampilkan notifikasi sukses
-                showToast('Pengaduan berhasil dikirim!', 'success');
-                
-                // Kirim data ke Formspree (jika diperlukan)
-                // Jika ingin mengirim ke Formspree, hapus komentar di bawah ini
-                /*
+                // Kirim data ke Formspree
                 fetch(form.action, {
                     method: 'POST',
-                    body: formData,
+                    body: new FormData(form),
                     headers: {
                         'Accept': 'application/json'
                     }
@@ -1015,13 +1176,13 @@
                 .catch(error => {
                     showToast('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
                     console.error('Error:', error);
+                })
+                .finally(() => {
+                    // Sembunyikan loading state
+                    submitText.style.display = 'inline';
+                    submitLoading.style.display = 'none';
+                    submitButton.disabled = false;
                 });
-                */
-                
-                // Reset form
-                form.reset();
-                filePreviewContainer.innerHTML = '';
-                uploadedFiles = [];
             });
             
             // Tampilkan daftar pengaduan saat halaman dimuat
