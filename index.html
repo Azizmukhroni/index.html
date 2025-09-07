@@ -2,558 +2,1424 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Integrasi Aman Database Kasir dan Pengaduan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AduanMasyarakat - Layanan Pengaduan Real-Time</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2c3e50">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="AduanMasyarakat">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/180/1006/1006771.png">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/192/1006/1006771.png">
+    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/192/1006/1006771.png">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+    
+    <!-- CSS Internal -->
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background-color: #f5f7fa;
             color: #333;
-            min-height: 100vh;
-            padding: 20px;
+            max-width: 100%;
+            overflow-x: hidden;
             line-height: 1.6;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
+            padding: 0 20px;
         }
         
+        /* Header Styles */
         header {
-            background: #2c3e50;
+            background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
             color: white;
-            padding: 30px;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo i {
+            font-size: 28px;
+            color: #3498db;
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+        
+        .nav-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(44, 62, 80, 0.85), rgba(44, 62, 80, 0.85)), url('https://images.unsplash.com/photo-1519501025264-65ba15a82390?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 80px 0;
             text-align: center;
         }
         
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
         }
         
-        .subtitle {
+        .hero h2 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            margin-bottom: 30px;
             font-size: 1.2rem;
             opacity: 0.9;
         }
         
-        .content {
-            display: flex;
-            flex-wrap: wrap;
-            padding: 20px;
+        .btn {
+            display: inline-block;
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            min-height: 44px;
+            line-height: 1.2;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
         }
         
-        .info-section {
-            flex: 1;
-            min-width: 300px;
-            padding: 20px;
+        .btn:hover, .btn:focus {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
         }
         
-        .demo-section {
-            flex: 1;
-            min-width: 300px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background-color: #fff;
         }
         
-        h2 {
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
             color: #2c3e50;
-            margin: 20px 0 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #3498db;
+            font-size: 2.2rem;
+            font-weight: 700;
+            position: relative;
         }
         
-        h3 {
-            color: #2c3e50;
-            margin: 15px 0 10px;
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            margin: 15px auto;
+            border-radius: 2px;
         }
         
-        p {
-            margin-bottom: 15px;
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
         }
         
-        ul {
-            margin-left: 20px;
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-top: 4px solid #3498db;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-card i {
+            font-size: 48px;
+            color: #3498db;
             margin-bottom: 20px;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
-        li {
+        .feature-card h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 1.4rem;
+        }
+        
+        .feature-card p {
+            line-height: 1.6;
+            color: #7f8c8d;
+        }
+        
+        /* App Screenshot Section */
+        .app-screenshot {
+            background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+            padding: 80px 0;
+            text-align: center;
+            color: white;
+        }
+        
+        .screenshot-container {
+            max-width: 320px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .phone-mockup {
+            background: #1a2530;
+            padding: 50px 20px 50px 20px;
+            height: 580px;
+            border-radius: 40px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .phone-content {
+            background: linear-gradient(135deg, #8e44ad, #3498db);
+            height: 100%;
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .screen-content {
+            padding: 25px;
+            color: #333;
+            height: 100%;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+        }
+        
+        .complaint-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+        
+        .complaint-item h4 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .complaint-item p {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            line-height: 1.5;
             margin-bottom: 8px;
         }
         
-        .security-box {
-            background: #e8f4fc;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            border-left: 4px solid #3498db;
+        .status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
         
-        .warning-box {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            border-left: 4px solid #ffc107;
+        .status.process {
+            background-color: #ffeaa7;
+            color: #d35400;
         }
         
-        .danger-box {
-            background: #f8d7da;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            border-left: 4px solid #dc3545;
+        .status.done {
+            background-color: #55efc4;
+            color: #00b894;
+        }
+        
+        .floating-btn {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 15px rgba(231, 76, 60, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .floating-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.6);
+        }
+        
+        /* Form Section */
+        .form-section {
+            padding: 80px 0;
+            background-color: #f8f9fa;
+        }
+        
+        .form-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 0 auto;
+            max-width: 800px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
         }
         
         .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        /* File Upload Styles */
+        .file-upload-container {
+            margin-bottom: 25px;
+        }
+        
+        .file-upload-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .file-upload-wrapper {
+            position: relative;
             margin-bottom: 15px;
         }
         
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-        
-        input, select, textarea {
+        .file-upload-input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        
-        button {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 5px;
+            padding: 40px 20px;
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            background-color: #f8f9fa;
             cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload-input:hover, .file-upload-input:focus {
+            background-color: #e8f4fc;
+            border-color: #2980b9;
+        }
+        
+        .file-upload-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
             font-size: 16px;
+            border: none;
             font-weight: 600;
-            transition: background 0.3s;
-            margin-right: 10px;
-            margin-bottom: 10px;
+            transition: all 0.3s ease;
         }
         
-        button:hover {
-            background: #2980b9;
+        .file-upload-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(52, 152, 219, 0.3);
         }
         
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .file-preview-container {
             margin-top: 20px;
         }
         
-        th, td {
+        .file-preview {
+            display: flex;
+            align-items: center;
+            background-color: #f8f9fa;
             padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #e8e8e8;
         }
         
-        th {
-            background: #2c3e50;
+        .file-preview-icon {
+            margin-right: 12px;
+            color: #3498db;
+            font-size: 20px;
+        }
+        
+        .file-preview-info {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        
+        .file-preview-name {
+            font-size: 14px;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 500;
+        }
+        
+        .file-preview-size {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        .file-preview-remove {
+            color: #e74c3c;
+            cursor: pointer;
+            padding: 8px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .file-preview-remove:hover {
+            transform: scale(1.2);
+        }
+        
+        /* Download Section */
+        .download-section {
+            padding: 80px 0;
+            text-align: center;
+            background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
             color: white;
         }
         
-        tr:nth-child(even) {
-            background: #f8f9fa;
+        .download-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
         }
         
-        tr:hover {
-            background: #e8f4fc;
+        .download-btn {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            color: #2c3e50;
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            min-height: 44px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
         }
         
-        .code-block {
-            background: #2b2b2b;
-            color: #f8f8f2;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
-            overflow-x: auto;
-            font-family: Consolas, Monaco, 'Andale Mono', monospace;
+        .download-btn:hover, .download-btn:focus {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
         }
         
-        .status-indicator {
+        .download-btn i {
+            margin-right: 12px;
+            font-size: 28px;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 60px 0 30px;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-logo i {
+            font-size: 32px;
+            color: #3498db;
+        }
+        
+        .footer-logo h2 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        
+        .footer-links a:hover, .footer-links a:focus {
+            color: #3498db;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .copyright {
+            margin-top: 30px;
+            color: #bdc3c7;
+            font-size: 0.9rem;
+        }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #333;
+            color: white;
+            padding: 18px 24px;
+            border-radius: 8px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: translateY(20px);
+            max-width: 350px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            pointer-events: none;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .toast.success {
+            background-color: #2ecc71;
+        }
+        
+        .toast.error {
+            background-color: #e74c3c;
+        }
+        
+        /* Loading spinner */
+        .spinner {
             display: inline-block;
-            padding: 5px 10px;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .hero h2 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-container {
+                padding: 25px;
+            }
+            
+            .download-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .download-btn {
+                width: 100%;
+                max-width: 280px;
+                justify-content: center;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fadeIn {
+            animation: fadeIn 0.6s ease forwards;
+        }
+        
+        /* Additional UI Improvements */
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
             border-radius: 20px;
-            font-size: 14px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 10px;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            color: white;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            color: #7f8c8d;
+        }
+        
+        .testimonial {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin: 20px 0;
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
             font-weight: 600;
         }
         
-        .status-safe {
-            background: #d4edda;
-            color: #155724;
+        .author-info h4 {
+            color: #2c3e50;
+            margin-bottom: 5px;
         }
         
-        .status-warning {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .status-danger {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 20px;
-            background: #2c3e50;
-            color: white;
-        }
-        
-        @media (max-width: 768px) {
-            .content {
-                flex-direction: column;
-            }
+        .author-info p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Integrasi Aman Database Kasir & Pengaduan</h1>
-            <p class="subtitle">Solusi Teraman untuk Menghubungkan Sistem Pengaduan dengan Database Kasir</p>
-        </header>
-        
-        <div class="content">
-            <div class="info-section">
-                <h2>Strategi Keamanan Database Kasir</h2>
-                
-                <div class="security-box">
-                    <h3>✔️ Database Terpisah dengan Hak Akses Terbatas</h3>
-                    <p>Buat database terpisah khusus untuk aplikasi pengaduan dengan user yang hanya memiliki akses ke database tersebut, bukan ke database kasir.</p>
+    <!-- Skip link for accessibility -->
+    <a href="#main-content" class="skip-link">Langsung ke konten utama</a>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-house-damage" aria-hidden="true"></i>
+                    <h1>AduanMasyarakat</h1>
                 </div>
-                
-                <div class="security-box">
-                    <h3>✔️ Backup Rutin dan Terencana</h3>
-                    <p>Lakukan backup database kasir sebelum melakukan perubahan apapun dan jadwalkan backup rutin untuk kedua database.</p>
-                </div>
-                
-                <div class="security-box">
-                    <h3>✔️ Monitoring Performa Terus Menerus</h3>
-                    <p>Pantau penggunaan resource database untuk memastikan operasional kasir tidak terganggu oleh aktivitas sistem pengaduan.</p>
-                </div>
-                
-                <h2>Langkah-Langkah Pengamanan</h2>
-                
-                <div class="warning-box">
-                    <h3>🔧 1. Buat Database Terpisah</h3>
-                    <p>Jangan gunakan database kasir yang sama. Buat database baru khusus untuk sistem pengaduan.</p>
-                    <div class="code-block">
-                        -- Buat database baru<br>
-                        CREATE DATABASE db_pengaduan;<br><br>
-                        
-                        -- Buat user khusus dengan password kuat<br>
-                        CREATE USER 'pengaduan_user'@'localhost' IDENTIFIED BY 'PasswordKuat123!';<br><br>
-                        
-                        -- Berikan hak akses hanya ke database pengaduan<br>
-                        GRANT ALL PRIVILEGES ON db_pengaduan.* TO 'pengaduan_user'@'localhost';<br><br>
-                        
-                        -- Segarkan hak akses<br>
-                        FLUSH PRIVILEGES;
-                    </div>
-                </div>
-                
-                <div class="warning-box">
-                    <h3>📊 2. Batasi Koneksi dan Query</h3>
-                    <p>Batasi jumlah koneksi dan query per user untuk mencegah overload pada server database.</p>
-                    <div class="code-block">
-                        -- Batasi resource untuk user pengaduan<br>
-                        GRANT USAGE ON *.* TO 'pengaduan_user'@'localhost' WITH<br>
-                        &nbsp;&nbsp;MAX_QUERIES_PER_HOUR 1000<br>
-                        &nbsp;&nbsp;MAX_UPDATES_PER_HOUR 100<br>
-                        &nbsp;&nbsp;MAX_CONNECTIONS_PER_HOUR 100;<br>
-                    </div>
-                </div>
-                
-                <div class="warning-box">
-                    <h3>🔐 3. Gunakan Koneksi Terenkripsi</h3>
-                    <p>Pastikan koneksi antara aplikasi dan database dienkripsi menggunakan SSL.</p>
-                    <div class="code-block">
-                        // Contoh koneksi PHP dengan SSL<br>
-                        $mysqli = new mysqli($host, $user, $password, $database, $port, $socket);<br>
-                        if ($mysqli->ssl_set(NULL, NULL, '/path/to/ca-cert.pem', NULL, NULL)) {<br>
-                        &nbsp;&nbsp;echo "SSL koneksi berhasil";<br>
-                        } else {<br>
-                        &nbsp;&nbsp;echo "SSL koneksi gagal";<br>
-                        }
-                    </div>
-                </div>
-                
-                <h2>Pemantauan Performa</h2>
-                
-                <div class="security-box">
-                    <h3>📈 Monitor Resource Database</h3>
-                    <p>Gunakan tools seperti MySQL Workbench atau phpMyAdmin untuk memantau:</p>
-                    <ul>
-                        <li>CPU dan memory usage</li>
-                        <li>Jumlah koneksi aktif</li>
-                        <li>Query yang paling banyak menggunakan resource</li>
-                        <li>Lama waktu eksekusi query</li>
-                    </ul>
-                </div>
-                
-                <div class="security-box">
-                    <h3>⚡ Optimasi Query dan Indexing</h3>
-                    <p>Pastikan query pada database pengaduan dioptimalkan dengan baik dan menggunakan index yang tepat.</p>
-                    <div class="code-block">
-                        -- Contoh membuat index<br>
-                        CREATE INDEX idx_status ON pengaduan (status);<br>
-                        CREATE INDEX idx_tanggal ON pengaduan (tanggal_lapor);
-                    </div>
-                </div>
-            </div>
-            
-            <div class="demo-section">
-                <h2>Simulator Manajemen Database Aman</h2>
-                <p>Status Keamanan: <span class="status-indicator status-safe">Database Terpisah - AMAN</span></p>
-                
-                <h3>Konfigurasi Database</h3>
-                <div class="form-group">
-                    <label for="dbType">Jenis Database</label>
-                    <select id="dbType">
-                        <option value="separate">Database Terpisah (Rekomendasi)</option>
-                        <option value="same">Database Sama (Tidak Disarankan)</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="dbName">Nama Database</label>
-                    <input type="text" id="dbName" value="db_pengaduan" placeholder="Nama database">
-                </div>
-                
-                <div class="form-group">
-                    <label for="dbUser">Username</label>
-                    <input type="text" id="dbUser" value="pengaduan_user" placeholder="Username database">
-                </div>
-                
-                <div class="form-group">
-                    <label for="dbPass">Password</label>
-                    <input type="password" id="dbPass" placeholder="Password yang kuat">
-                </div>
-                
-                <button onclick="testSecurity()">Test Konfigurasi Keamanan</button>
-                <button onclick="applyConfig()">Terapkan Konfigurasi</button>
-                
-                <div id="securityResult"></div>
-                
-                <h3>Simulasi Backup Database</h3>
-                <p>Status Backup Terakhir: <span id="backupStatus">Belum dilakukan</span></p>
-                
-                <button onclick="simulateBackup()">Simulasi Backup Database Kasir</button>
-                <button onclick="simulateRestore()">Simulasi Restore dari Backup</button>
-                
-                <h3>Monitor Performa</h3>
-                <div class="form-group">
-                    <label>Penggunaan CPU Database: <span id="cpuUsage">25%</span></label>
-                    <div style="background: #ddd; height: 20px; border-radius: 10px; margin-top: 5px;">
-                        <div id="cpuBar" style="background: #2ecc71; height: 100%; width: 25%; border-radius: 10px;"></div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Penggunaan Memory Database: <span id="memUsage">40%</span></label>
-                    <div style="background: #ddd; height: 20px; border-radius: 10px; margin-top: 5px;">
-                        <div id="memBar" style="background: #3498db; height: 100%; width: 40%; border-radius: 10px;"></div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Jumlah Koneksi Aktif: <span id="connCount">5</span></label>
-                    <div style="background: #ddd; height: 20px; border-radius: 10px; margin-top: 5px;">
-                        <div id="connBar" style="background: #f39c12; height: 100%; width: 25%; border-radius: 10px;"></div>
-                    </div>
-                </div>
-                
-                <button onclick="startMonitoring()">Mulai Pemantauan</button>
-                <button onclick="stressTest()">Test Beban Database</button>
-                
-                <h3>Log Aktivitas</h3>
-                <div style="height: 150px; overflow-y: scroll; border: 1px solid #ddd; padding: 10px; margin-top: 10px; background: #fff; border-radius: 5px;">
-                    <div id="activityLog">
-                        <div>[INFO] Sistem monitor diinisialisasi</div>
-                    </div>
-                </div>
+                <button class="nav-toggle" aria-label="Buka menu navigasi">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
         </div>
-        
-        <footer>
-            <p>© 2023 Integrasi Aman Database Kasir & Pengaduan - Protokol Keamanan Tingkat Tinggi</p>
-        </footer>
-    </div>
+    </header>
+
+    <main id="main-content">
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h2>Laporkan masalah Anda dengan mudah dan cepat</h2>
+                    <p>Aplikasi pengaduan masyarakat real-time yang memudahkan Anda melaporkan masalah di lingkungan sekitar dan melacak status pengaduannya.</p>
+                    <a href="#download" class="btn">Download Sekarang</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="container">
+                <h2 class="section-title">Fitur Unggulan</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-bullhorn" aria-hidden="true"></i>
+                        <h3>Laporan Real-Time</h3>
+                        <p>Kirim laporan dan dapatkan respon langsung dari instansi terkait</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+                        <h3>Lokasi Presisi</h3>
+                        <p>Tentukan lokasi kejadian dengan akurat menggunakan GPS</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-history" aria-hidden="true"></i>
+                        <h3>Lacak Status</h3>
+                        <p>Pantau perkembangan laporan Anda dari waktu ke waktu</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-camera" aria-hidden="true"></i>
+                        <h3>Lampiran Foto</h3>
+                        <p>Sertakan foto sebagai bukti untuk memperkuat laporan</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                        <h3>Privasi Terjaga</h3>
+                        <p>Laporkan secara anonim atau dengan identitas yang terlindungi</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-bell" aria-hidden="true"></i>
+                        <h3>Notifikasi</h3>
+                        <p>Dapatkan pemberitahuan ketika ada update pada laporan Anda</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="app-screenshot">
+            <div class="container">
+                <h2 class="section-title">Tampilan Aplikasi</h2>
+                <div class="screenshot-container">
+                    <div class="phone-mockup">
+                        <div class="phone-content">
+                            <div class="screen-content">
+                                <h3 style="text-align: center; margin-bottom: 20px; color: #2c3e50;">Daftar Pengaduan</h3>
+                                
+                                <div id="complaints-container">
+                                    <div class="complaint-item">
+                                        <h4>Jalan Rusak <span class="badge">Infrastruktur</span></h4>
+                                        <p>Jalan utama di Desa Suka Maju mengalami kerusakan parah...</p>
+                                        <span class="status process">Diproses</span>
+                                    </div>
+                                    <div class="complaint-item">
+                                        <h4>Sampah Menumpuk <span class="badge">Kebersihan</span></h4>
+                                        <p>Tumpukan sampah di RT 05 sudah tidak terangkut selama 3 hari...</p>
+                                        <span class="status done">Selesai</span>
+                                    </div>
+                                    <div class="complaint-item">
+                                        <h4>Lampu Jalan Mati <span class="badge">Keamanan</span></h4>
+                                        <p>Lampu jalan di Jl. Merdeka no. 24 sudah mati selama 2 minggu...</p>
+                                        <span class="status process">Diproses</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="floating-btn" aria-label="Buat pengaduan baru">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="form-section" class="form-section">
+            <div class="container">
+                <h2 class="section-title">Buat Pengaduan Baru</h2>
+                <div class="form-container">
+                    <form action="https://formspree.io/f/mwpnwrzk" method="POST" enctype="multipart/form-data" id="complaint-form">
+                      <input type="hidden" name="_subject" value="Pengaduan Baru dari Website">
+                      <input type="hidden" name="_replyto" value="aduanmasyarakat5@gmail.com">
+                      <input type="hidden" name="_format" value="plain">
+                      <input type="text" name="_gotcha" style="display:none">
+                      
+                      <div class="form-group">
+                        <label for="name">Nama Lengkap *</label>
+                        <input type="text" id="name" name="name" required aria-required="true">
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required aria-required="true">
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="phone">Nomor Telepon</label>
+                        <input type="tel" id="phone" name="phone">
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="location">Lokasi Kejadian *</label>
+                        <input type="text" id="location" name="location" required aria-required="true">
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="category">Kategori Pengaduan *</label>
+                        <select id="category" name="category" required aria-required="true">
+                          <option value="">Pilih Kategori</option>
+                          <option value="infrastruktur">Infrastruktur (Jalan, Jembatan)</option>
+                          <option value="kebersihan">Kebersihan (Sampah, Selokan)</option>
+                          <option value="keamanan">Keamanan (Lampu Jalan, Patroli)</option>
+                          <option value="lainnya">Lainnya</option>
+                        </select>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="description">Deskripsi Pengaduan *</label>
+                        <textarea id="description" name="description" required aria-required="true"></textarea>
+                      </div>
+                      
+                      <!-- File Upload Section -->
+                      <div class="file-upload-container">
+                        <label class="file-upload-label">Unggah Bukti (Foto/Dokumen)</label>
+                        <p style="font-size: 14px; color: #7f8c8d; margin-bottom: 15px;">Unggah foto atau dokumen pendukung (Maksimal 5 file, 5MB per file)</p>
+                        
+                        <div class="file-upload-wrapper">
+                          <div class="file-upload-input" id="file-drop-area">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 32px; margin-bottom: 15px; color: #3498db;"></i>
+                            <p>Seret file ke sini atau klik untuk memilih</p>
+                            <button type="button" class="file-upload-button">Pilih File</button>
+                            <input type="file" id="file-input" name="attachments" multiple accept="image/*,.pdf,.doc,.docx" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" aria-label="Unggah file pendukung">
+                          </div>
+                        </div>
+                        
+                        <div class="file-preview-container" id="file-preview-container"></div>
+                      </div>
+                      
+                      <button type="submit" class="btn" id="submit-button" style="width: 100%;">
+                        <span id="submit-text">Kirim Pengaduan</span>
+                        <span id="submit-loading" style="display: none;"><span class="spinner"></span> Mengirim...</span>
+                      </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section id="download" class="download-section">
+            <div class="container">
+                <h2 class="section-title">Download Aplikasi Sekarang</h2>
+                <p>Unduh aplikasi AduanMasyarakat secara gratis di platform Android</p>
+                <div class="download-buttons">
+                    <a href="download.html" class="download-btn">
+                        <i class="fab fa-google-play"></i>
+                        <span>Google Play Store</span>
+                    </a>
+                    <a href="download.html" class="download-btn">
+                        <i class="fas fa-download"></i>
+                        <span>Download APK</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-house-damage" aria-hidden="true"></i>
+                    <h2>AduanMasyarakat</h2>
+                </div>
+                <p>Aplikasi layanan pengaduan masyarakat terpercaya sejak 2025</p>
+                <div class="footer-links">
+                    <a href="tentang-kami.html">Tentang Kami</a>
+                    <a href="privacy.html">Kebijakan Privasi</a>
+                    <a href="terms.html">Syarat & Ketentuan</a>
+                    <a href="help.html">Bantuan</a>
+                    <a href="help.html#kontak">Kontak</a>
+                </div>
+                <p class="copyright">© 2025 AduanMasyarakat. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        // Variabel untuk simulasi
-        let cpuUsage = 25;
-        let memUsage = 40;
-        let connCount = 5;
-        let backupStatus = "Belum dilakukan";
-        let monitoringInterval;
-        
-        // Fungsi untuk test keamanan konfigurasi
-        function testSecurity() {
-            const dbType = document.getElementById('dbType').value;
-            const dbName = document.getElementById('dbName').value;
-            const dbUser = document.getElementById('dbUser').value;
-            const dbPass = document.getElementById('dbPass').value;
+        // Menu navigasi mobile
+        document.querySelector('.nav-toggle').addEventListener('click', function() {
+            // Buat modal/navigation drawer
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                right: 0;
+                width: 280px;
+                height: 100%;
+                background: white;
+                box-shadow: -2px 0 20px rgba(0,0,0,0.15);
+                z-index: 1000;
+                padding: 60px 25px;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
             
-            let resultHTML = "";
+            modal.innerHTML = `
+                <button style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 24px; color: #2c3e50; min-width: 44px; min-height: 44px; border-radius: 50%; transition: background-color 0.3s;" aria-label="Tutup menu" onmouseover="this.style.backgroundColor='#f5f7fa'" onmouseout="this.style.backgroundColor='transparent'">×</button>
+                <h3 style="color: #2c3e50; margin-bottom: 30px; font-size: 1.5rem; font-weight: 600;">Menu Navigasi</h3>
+                <nav style="display: flex; flex-direction: column; gap: 15px;">
+                    <a href="index.html" style="color: #2c3e50; text-decoration: none; padding: 15px; border-radius: 8px; transition: background 0.3s; min-height: 44px; display: flex; align-items: center; font-weight: 500;" onmouseover="this.style.backgroundColor='#f5f7fa'" onmouseout="this.style.backgroundColor='transparent'"><i class="fas fa-home" style="margin-right: 12px; width: 20px; text-align: center;"></i> Beranda</a>
+                    <a href="tentang-kami.html" style="color: #2c3e50; text-decoration: none; padding: 15px; border-radius: 8px; transition: background 0.3s; min-height: 44px; display: flex; align-items: center; font-weight: 500;" onmouseover="this.style.backgroundColor='#f5f7fa'" onmouseout="this.style.backgroundColor='transparent'"><i class="fas fa-info-circle" style="margin-right: 12px; width: 20px; text-align: center;"></i> Tentang Kami</a>
+                    <a href="#form-section" style="color: #2c3e50; text-decoration: none; padding: 15px; border-radius: 8px; transition: background 0.3s; min-height: 44px; display: flex; align-items: center; font-weight: 500;" onmouseover="this.style.backgroundColor='#f5f7fa'" onmouseout="this.style.backgroundColor='transparent'"><i class="fas fa-edit" style="margin-right: 12px; width: 20px; text-align: center;"></i> Buat Pengaduan</a>
+                    <a href="download.html" style="color: #2c3e50; text-decoration: none; padding: 15px; border-radius: 8px; transition: background 0.3s; min-height: 44px; display: flex; align-items: center; font-weight: 500;" onmouseover="this.style.backgroundColor='#f5f7fa'" onmouseout="this.style.backgroundColor='transparent'"><i class="fas fa-download" style="margin-right: 12px; width: 20px; text-align: center;"></i> Download App</a>
+                    <a href="help.html" style="color: #2c3e50; text-decoration: none; padding: 15px; border-radius: 8px; transition: background 0.3s; min-height: 44px; display: flex; align-items: center; font-weight: 500;" onmouseover="this.style.backgroundColor='#f5f7fa'" onmouseout="this.style.backgroundColor='transparent'"><i class="fas fa-question-circle" style="margin-right: 12px; width: 20px; text-align: center;"></i> Bantuan</a>
+                    <a href="help.html#kontak" style="color: #2c3e50; text-decoration: none; padding: 15px; border-radius: 8px; transition: background 0.3s; min-height: 44px; display: flex; align-items: center; font-weight: 500;" onmouseover="this.style.backgroundColor='#f5f7fa'" onmouseout="this.style.backgroundColor='transparent'"><i class="fas fa-phone-alt" style="margin-right: 12px; width: 20px; text-align: center;"></i> Kontak</a>
+                </nav>
+            `;
             
-            if (dbType === "same") {
-                resultHTML = `<div class="danger-box">
-                    <h3>⚠️ KONFIGURASI BERBAHAYA</h3>
-                    <p>Menggunakan database yang sama dengan sistem kasir sangat berisiko. Hal ini dapat mengganggu operasional kasir dan membahayakan data transaksi.</p>
-                    <p>Rekomendasi: Gunakan database terpisah untuk sistem pengaduan.</p>
-                </div>`;
-            } else {
-                // Test kekuatan password
-                let passwordStrength = "Lemah";
-                if (dbPass.length >= 12 && /[A-Z]/.test(dbPass) && /[0-9]/.test(dbPass) && /[^A-Za-z0-9]/.test(dbPass)) {
-                    passwordStrength = "Sangat Kuat";
-                } else if (dbPass.length >= 8 && /[A-Z]/.test(dbPass) && /[0-9]/.test(dbPass)) {
-                    passwordStrength = "Kuat";
-                } else if (dbPass.length >= 6) {
-                    passwordStrength = "Cukup";
+            document.body.appendChild(modal);
+            
+            // Animate in
+            setTimeout(() => modal.style.transform = 'translateX(0)', 10);
+            
+            // Focus trap for accessibility
+            const focusableElements = modal.querySelectorAll('a, button');
+            const firstFocusable = focusableElements[0];
+            const lastFocusable = focusableElements[focusableElements.length - 1];
+            
+            firstFocusable.focus();
+            
+            modal.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    if (e.shiftKey) {
+                        if (document.activeElement === firstFocusable) {
+                            e.preventDefault();
+                            lastFocusable.focus();
+                        }
+                    } else {
+                        if (document.activeElement === lastFocusable) {
+                            e.preventDefault();
+                            firstFocusable.focus();
+                        }
+                    }
                 }
                 
-                resultHTML = `<div class="security-box">
-                    <h3>✅ KONFIGURASI AMAN</h3>
-                    <p>Database terpisah: <strong>${dbName}</strong></p>
-                    <p>User khusus: <strong>${dbUser}</strong></p>
-                    <p>Kekuatan password: <strong>${passwordStrength}</strong></p>
-                    <p>Status: Konfigurasi ini aman untuk digunakan dan tidak akan mengganggu database kasir.</p>
-                </div>`;
+                if (e.key === 'Escape') {
+                    modal.style.transform = 'translateX(100%)';
+                    setTimeout(() => modal.remove(), 300);
+                }
+            });
+            
+            // Close button
+            modal.querySelector('button').addEventListener('click', function() {
+                modal.style.transform = 'translateX(100%)';
+                setTimeout(() => modal.remove(), 300);
+            });
+            
+            // Close when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.transform = 'translateX(100%)';
+                    setTimeout(() => modal.remove(), 300);
+                }
+            });
+            
+            // Close when clicking on links
+            modal.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', function() {
+                    modal.style.transform = 'translateX(100%)';
+                    setTimeout(() => modal.remove(), 300);
+                });
+            });
+        });
+
+        // Animasi sederhana untuk tombol
+        const buttons = document.querySelectorAll('.btn, .download-btn');
+        buttons.forEach(button => {
+            button.addEventListener('mousedown', function() {
+                this.style.transform = 'scale(0.95)';
+            });
+            button.addEventListener('mouseup', function() {
+                this.style.transform = '';
+            });
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+            });
+        });
+
+        // File Upload Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('file-input');
+            const fileDropArea = document.getElementById('file-drop-area');
+            const filePreviewContainer = document.getElementById('file-preview-container');
+            const fileUploadButton = document.querySelector('.file-upload-button');
+            const maxFiles = 5;
+            const maxFileSize = 5 * 1024 * 1024; // 5MB
+            let uploadedFiles = [];
+            
+            // Trigger file input when button is clicked
+            fileUploadButton.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                fileDropArea.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            // Highlight drop area when item is dragged over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+                fileDropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                fileDropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            // Handle dropped files
+            fileDropArea.addEventListener('drop', handleDrop, false);
+            
+            // Handle selected files from input
+            fileInput.addEventListener('change', handleFiles, false);
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
             }
             
-            document.getElementById('securityResult').innerHTML = resultHTML;
-            addLog("Test keamanan konfigurasi dilakukan");
-        }
-        
-        // Fungsi untuk menerapkan konfigurasi
-        function applyConfig() {
-            const dbType = document.getElementById('dbType').value;
+            function highlight() {
+                fileDropArea.style.backgroundColor = '#e8f4fc';
+                fileDropArea.style.borderColor = '#2980b9';
+                fileDropArea.style.borderStyle = 'solid';
+            }
             
-            if (dbType === "same") {
-                if (!confirm("Peringatan: Menggunakan database yang sama dengan sistem kasir dapat membahayakan operasional. Apakah Anda yakin?")) {
+            function unhighlight() {
+                fileDropArea.style.backgroundColor = '#f8f9fa';
+                fileDropArea.style.borderColor = '#3498db';
+                fileDropArea.style.borderStyle = 'dashed';
+            }
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles({ target: { files } });
+            }
+            
+            function handleFiles(e) {
+                const files = e.target.files;
+                
+                if (uploadedFiles.length + files.length > maxFiles) {
+                    showToast(`Maksimal ${maxFiles} file yang dapat diunggah.`, 'error');
                     return;
                 }
-            }
-            
-            addLog("Konfigurasi database diterapkan");
-            alert("Konfigurasi berhasil diterapkan!");
-        }
-        
-        // Fungsi untuk simulasi backup
-        function simulateBackup() {
-            addLog("Memulai backup database kasir...");
-            
-            // Simulasi proses backup
-            setTimeout(() => {
-                const now = new Date();
-                backupStatus = now.toLocaleString();
-                document.getElementById('backupStatus').textContent = backupStatus;
-                addLog("Backup database kasir berhasil diselesaikan");
-                alert(`Backup berhasil dibuat pada: ${backupStatus}`);
-            }, 2000);
-        }
-        
-        // Fungsi untuk simulasi restore
-        function simulateRestore() {
-            if (backupStatus === "Belum dilakukan") {
-                alert("Belum ada backup yang dibuat!");
-                return;
-            }
-            
-            addLog("Memulai restore database dari backup...");
-            
-            // Simulasi proses restore
-            setTimeout(() => {
-                addLog("Restore database berhasil dilakukan");
-                alert(`Database berhasil direstore dari backup: ${backupStatus}`);
-            }, 2000);
-        }
-        
-        // Fungsi untuk memulai pemantauan
-        function startMonitoring() {
-            addLog("Memulai pemantauan performa database...");
-            
-            if (monitoringInterval) {
-                clearInterval(monitoringInterval);
-            }
-            
-            // Update data secara acak untuk simulasi
-            monitoringInterval = setInterval(() => {
-                cpuUsage = Math.min(100, Math.max(5, cpuUsage + (Math.random() * 10 - 5)));
-                memUsage = Math.min(100, Math.max(10, memUsage + (Math.random() * 8 - 4)));
-                connCount = Math.min(20, Math.max(1, connCount + (Math.random() > 0.5 ? 1 : -1)));
                 
-                updateMonitoringUI();
-            }, 2000);
-        }
-        
-        // Fungsi untuk update UI pemantauan
-        function updateMonitoringUI() {
-            document.getElementById('cpuUsage').textContent = cpuUsage.toFixed(0) + "%";
-            document.getElementById('memUsage').textContent = memUsage.toFixed(0) + "%";
-            document.getElementById('connCount').textContent = connCount;
-            
-            document.getElementById('cpuBar').style.width = cpuUsage + "%";
-            document.getElementById('memBar').style.width = memUsage + "%";
-            document.getElementById('connBar').style.width = (connCount / 20 * 100) + "%";
-            
-            // Ubah warna berdasarkan beban
-            document.getElementById('cpuBar').style.background = cpuUsage > 80 ? "#e74c3c" : (cpuUsage > 60 ? "#f39c12" : "#2ecc71");
-            document.getElementById('memBar').style.background = memUsage > 80 ? "#e74c3c" : (memUsage > 60 ? "#f39c12" : "#3498db");
-        }
-        
-        // Fungsi untuk test beban database
-        function stressTest() {
-            addLog("Memulai stress test database...");
-            
-            // Simulasi peningkatan beban
-            let stressInterval = setInterval(() => {
-                cpuUsage = Math.min(100, cpuUsage + 5);
-                memUsage = Math.min(100, memUsage + 3);
-                connCount = Math.min(20, connCount + 1);
-                
-                updateMonitoringUI();
-                
-                if (cpuUsage >= 95) {
-                    clearInterval(stressInterval);
-                    addLog("Stress test dihentikan: CPU mencapai batas maksimal");
-                    alert("Peringatan: Beban database mencapai tingkat kritis!");
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    
+                    // Validate file size
+                    if (file.size > maxFileSize) {
+                        showToast(`File ${file.name} terlalu besar. Maksimal ukuran file adalah 5MB.`, 'error');
+                        continue;
+                    }
+                    
+                    // Validate file type
+                    const validFileTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+                    if (!validFileTypes.includes(file.type)) {
+                        showToast(`File ${file.name} memiliki tipe yang tidak didukung. Hanya gambar, PDF, dan dokumen Word yang diperbolehkan.`, 'error');
+                        continue;
+                    }
+                    
+                    uploadedFiles.push(file);
+                    previewFile(file);
                 }
-            }, 500);
+                
+                // Reset the file input
+                fileInput.value = '';
+            }
+            
+            function previewFile(file) {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                
+                reader.onloadend = function() {
+                    const preview = document.createElement('div');
+                    preview.className = 'file-preview';
+                    
+                    let iconClass = 'fa-file';
+                    if (file.type.includes('image')) {
+                        iconClass = 'fa-file-image';
+                    } else if (file.type.includes('pdf')) {
+                        iconClass = 'fa-file-pdf';
+                    } else if (file.type.includes('word')) {
+                        iconClass = 'fa-file-word';
+                    }
+                    
+                    const fileSize = formatFileSize(file.size);
+                    
+                    preview.innerHTML = `
+                        <div class="file-preview-icon">
+                            <i class="fas ${iconClass}"></i>
+                        </div>
+                        <div class="file-preview-info">
+                            <div class="file-preview-name">${escapeHtml(file.name)}</div>
+                            <div class="file-preview-size">${fileSize}</div>
+                        </div>
+                        <button class="file-preview-remove" data-filename="${escapeHtml(file.name)}" aria-label="Hapus file">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    
+                    filePreviewContainer.appendChild(preview);
+                    
+                    // Add event listener for remove button
+                    const removeBtn = preview.querySelector('.file-preview-remove');
+                    removeBtn.addEventListener('click', function() {
+                        const filename = this.getAttribute('data-filename');
+                        removeFile(filename);
+                        preview.remove();
+                    });
+                };
+            }
+            
+            function removeFile(filename) {
+                uploadedFiles = uploadedFiles.filter(file => file.name !== filename);
+            }
+            
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            function escapeHtml(unsafe) {
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+            
+            // Fungsi untuk menampilkan toast notification
+            function showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.className = `toast ${type} show`;
+                
+                setTimeout(() => {
+                    toast.className = 'toast';
+                }, 3000);
+            }
+            
+            // Fungsi untuk menyimpan data pengaduan ke localStorage
+            function saveComplaintToLocal(complaintData) {
+                // Ambil data yang sudah ada dari localStorage
+                const existingComplaints = JSON.parse(localStorage.getItem('complaints')) || [];
+                
+                // Tambahkan ID dan timestamp ke data pengaduan
+                complaintData.id = Date.now();
+                complaintData.timestamp = new Date().toISOString();
+                complaintData.status = 'process'; // Status default
+                
+                // Tambahkan pengaduan baru ke array
+                existingComplaints.push(complaintData);
+                
+                // Simpan kembali ke localStorage
+                localStorage.setItem('complaints', JSON.stringify(existingComplaints));
+                
+                return complaintData;
+            }
+            
+            // Fungsi untuk menampilkan daftar pengaduan
+            function displayComplaints() {
+                const complaintsContainer = document.getElementById('complaints-container');
+                const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+                
+                if (complaints.length === 0) {
+                    complaintsContainer.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #7f8c8d;">
+                            <i class="fas fa-inbox" style="font-size: 40px; margin-bottom: 15px;"></i>
+                            <p>Belum ada pengaduan</p>
+                            <p>Jadilah yang pertama melaporkan</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Urutkan berdasarkan timestamp (terbaru pertama)
+                complaints.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                
+                // Tampilkan maksimal 5 pengaduan terbaru
+                const recentComplaints = complaints.slice(0, 5);
+                
+                let complaintsHTML = '';
+                recentComplaints.forEach(complaint => {
+                    const date = new Date(complaint.timestamp).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                    });
+                    
+                    const statusClass = complaint.status === 'done' ? 'done' : 'process';
+                    const statusText = complaint.status === 'done' ? 'Selesai' : 'Diproses';
+                    
+                    complaintsHTML += `
+                        <div class="complaint-item">
+                            <h4>${escapeHtml(complaint.category)} <span class="badge">${complaint.category}</span></h4>
+                            <p>${escapeHtml(complaint.description.substring(0, 60))}${complaint.description.length > 60 ? '...' : ''}</p>
+                            <p><small>${date}</small></p>
+                            <span class="status ${statusClass}">${statusText}</span>
+                        </div>
+                    `;
+                });
+                
+                complaintsContainer.innerHTML = complaintsHTML;
+            }
+            
+            // Update form submission untuk menyimpan data ke localStorage
+            const form = document.getElementById('complaint-form');
+            const submitButton = document.getElementById('submit-button');
+            const submitText = document.getElementById('submit-text');
+            const submitLoading = document.getElementById('submit-loading');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validasi form
+                const requiredFields = form.querySelectorAll('[required]');
+                let isValid = true;
+                
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        field.style.borderColor = '#e74c3c';
+                        isValid = false;
+                    } else {
+                        field.style.borderColor = '#ddd';
+                    }
+                });
+                
+                if (!isValid) {
+                    showToast('Harap isi semua field yang wajib diisi.', 'error');
+                    return;
+                }
+                
+                // Tampilkan loading state
+                submitText.style.display = 'none';
+                submitLoading.style.display = 'inline';
+                submitButton.disabled = true;
+                
+                // Ambil data dari form
+                const formData = new FormData(form);
+                const complaintData = {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    location: formData.get('location'),
+                    category: formData.get('category'),
+                    description: formData.get('description')
+                };
+                
+                // Simpan ke localStorage
+                saveComplaintToLocal(complaintData);
+                
+                // Perbarui tampilan daftar pengaduan
+                displayComplaints();
+                
+                // Kirim data ke Formspree
+                fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        showToast('Pengaduan berhasil dikirim!', 'success');
+                        form.reset();
+                        filePreviewContainer.innerHTML = '';
+                        uploadedFiles = [];
+                    } else {
+                        showToast('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
+                    }
+                })
+                .catch(error => {
+                    showToast('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
+                    console.error('Error:', error);
+                })
+                .finally(() => {
+                    // Sembunyikan loading state
+                    submitText.style.display = 'inline';
+                    submitLoading.style.display = 'none';
+                    submitButton.disabled = false;
+                });
+            });
+            
+            // Tampilkan daftar pengaduan saat halaman dimuat
+            displayComplaints();
+        });
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('sw.js')
+                    .then(function(registration) {
+                        console.log('SW registered successfully with scope: ', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('SW registration failed: ', error);
+                    });
+            });
         }
-        
-        // Fungsi untuk menambah log aktivitas
-        function addLog(message) {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString();
-            const logEntry = document.createElement('div');
-            logEntry.innerHTML = `[${timeString}] ${message}`;
-            document.getElementById('activityLog').prepend(logEntry);
+
+        // Detect jika di standalone mode
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            console.log('Running as PWA');
+            document.body.classList.add('pwa-mode');
         }
-        
-        // Inisialisasi
-        document.addEventListener('DOMContentLoaded', function() {
-            updateMonitoringUI();
-            addLog("Sistem manajemen database diinisialisasi");
+
+        // Beforeinstallprompt event
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            console.log('PWA dapat diinstall');
+        });
+
+        // Tangkap error images
+        document.addEventListener('error', function(e) {
+            if (e.target.tagName === 'IMG') {
+                e.target.style.display = 'none';
+            }
+        }, true);
+
+        // Animasi scroll halus untuk anchor link
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
         });
     </script>
 </body>
