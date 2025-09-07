@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Pengaduan Masyarakat Real-Time</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #0066cc 0%, #003366 100%);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .card h2 {
+            color: #0066cc;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #0066cc;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #0052a3;
+        }
+        
+        .status-check {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .status-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        
+        .status-process {
+            background: #cce5ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+        
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .recent-complaints {
+            margin-top: 40px;
+        }
+        
+        .complaints-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .complaint-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #0066cc;
+        }
+        
+        .complaint-item h3 {
+            color: #0066cc;
+            margin-bottom: 10px;
+        }
+        
+        .complaint-meta {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .complaint-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-badge-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-badge-process {
+            background: #cce5ff;
+            color: #004085;
+        }
+        
+        .status-badge-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .complaints-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Sistem Pengaduan Masyarakat</h1>
+            <p>Layanan pengaduan online real-time untuk kemajuan bersama</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="card">
+                <h2>Buat Pengaduan Baru</h2>
+                <form id="complaintForm">
+                    <div class="form-group">
+                        <label for="name">Nama Lengkap</label>
+                        <input type="text" id="name" placeholder="Masukkan nama lengkap" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="Masukkan alamat email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Nomor Telepon</label>
+                        <input type="tel" id="phone" placeholder="Masukkan nomor telepon" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="category">Kategori Pengaduan</label>
+                        <select id="category" required>
+                            <option value="">Pilih kategori</option>
+                            <option value="infrastruktur">Infrastruktur</option>
+                            <option value="lingkungan">Lingkungan</option>
+                            <option value="kesehatan">Kesehatan</option>
+                            <option value="pendidikan">Pendidikan</option>
+                            <option value="lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Lokasi Kejadian</label>
+                        <input type="text" id="location" placeholder="Masukkan lokasi kejadian" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Deskripsi Pengaduan</label>
+                        <textarea id="description" placeholder="Jelaskan secara detail pengaduan Anda" required></textarea>
+                    </div>
+                    
+                    <button type="submit">Kirim Pengaduan</button>
+                </form>
+                
+                <div class="status-check">
+                    <h3>Cek Status Pengaduan</h3>
+                    <div class="form-group">
+                        <label for="ticketNumber">Nomor Tiket</label>
+                        <input type="text" id="ticketNumber" placeholder="Masukkan nomor tiket pengaduan">
+                    </div>
+                    <button onclick="checkStatus()">Cek Status</button>
+                    
+                    <div id="statusResult" class="status-result">
+                        <h4>Status Pengaduan: <span id="statusText"></span></h4>
+                        <p>Nomor Tiket: <span id="ticketResult"></span></p>
+                        <p>Tanggal: <span id="dateResult"></span></p>
+                        <p>Detail: <span id="detailResult"></span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Informasi Pengaduan</h2>
+                <p>Silakan isi formulir pengaduan di samping untuk melaporkan masalah yang Anda temui. Setelah pengaduan dikirim, Anda akan menerima nomor tiket untuk melacak status pengaduan.</p>
+                
+                <h3>Alur Proses Pengaduan</h3>
+                <ol style="padding-left: 20px; margin: 15px 0;">
+                    <li>Isi formulir pengaduan dengan data yang valid</li>
+                    <li>Pengaduan akan diverifikasi oleh admin</li>
+                    <li>Pengaduan diproses oleh instansi terkait</li>
+                    <li>Status akhir akan diupdate dan dapat dilacak</li>
+                </ol>
+                
+                <h3>Kategori Pengaduan</h3>
+                <ul style="padding-left: 20px; margin: 15px 0;">
+                    <li><strong>Infrastruktur</strong>: Jalan rusak, jembatan, bangunan publik</li>
+                    <li><strong>Lingkungan</strong>: Sampah, pencemaran, banjir</li>
+                    <li><strong>Kesehatan</strong>: Fasilitas kesehatan, layanan kesehatan</li>
+                    <li><strong>Pendidikan</strong>: Fasilitas pendidikan, kualitas pendidikan</li>
+                    <li><strong>Lainnya</strong>: Masalah lainnya yang perlu dilaporkan</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="recent-complaints">
+            <h2>Pengaduan Terbaru</h2>
+            <div class="complaints-list">
+                <div class="complaint-item">
+                    <h3>Jalan Rusak di Perumahan Taman Asri</h3>
+                    <div class="complaint-meta">
+                        <p>Oleh: Ahmad Susanto | 12 Jun 2023</p>
+                    </div>
+                    <p>Jalan utama di perumahan Taman Asri blok D dalam kondisi rusak parah dan membahayakan pengendara.</p>
+                    <span class="complaint-status status-badge-process">Dalam Proses</span>
+                </div>
+                
+                <div class="complaint-item">
+                    <h3>Sampah Menumpuk di RT 05</h3>
+                    <div class="complaint-meta">
+                        <p>Oleh: Siti Rahayu | 10 Jun 2023</p>
+                    </div>
+                    <p>Sampah sudah tidak diangkut selama 1 minggu dan mulai menimbulkan bau tidak sedap.</p>
+                    <span class="complaint-status status-badge-completed">Selesai</span>
+                </div>
+                
+                <div class="complaint-item">
+                    <h3>Penerangan Jalan Umum Mati</h3>
+                    <div class="complaint-meta">
+                        <p>Oleh: Budi Santoso | 8 Jun 2023</p>
+                    </div>
+                    <p>Lampu penerangan jalan umum di sepanjang Jalan Merdeka dari jam 19.00 WIB selalu mati.</p>
+                    <span class="complaint-status status-badge-pending">Menunggu</span>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Dinas Komunikasi dan Informatika © 2023 - Sistem Pengaduan Masyarakat Real-Time</p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('complaintForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Simulasi pengiriman data ke database
+            const ticketNumber = 'TKT-' + Math.floor(100000 + Math.random() * 900000);
+            
+            alert(`Pengaduan berhasil dikirim!\nNomor Tiket Anda: ${ticketNumber}\nSimpan nomor ini untuk melacak status pengaduan.`);
+            
+            // Reset form
+            document.getElementById('complaintForm').reset();
+        });
+        
+        function checkStatus() {
+            const ticketNumber = document.getElementById('ticketNumber').value;
+            
+            if (!ticketNumber) {
+                alert('Masukkan nomor tiket terlebih dahulu');
+                return;
+            }
+            
+            // Simulasi pengecekan status dari database
+            const statuses = ['Menunggu', 'Dalam Proses', 'Selesai', 'Ditolak'];
+            const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+            
+            const statusResult = document.getElementById('statusResult');
+            statusResult.style.display = 'block';
+            
+            // Hapus semua kelas status sebelumnya
+            statusResult.classList.remove('status-pending', 'status-process', 'status-completed', 'status-rejected');
+            
+            // Tambahkan kelas status yang sesuai
+            if (randomStatus === 'Menunggu') {
+                statusResult.classList.add('status-pending');
+            } else if (randomStatus === 'Dalam Proses') {
+                statusResult.classList.add('status-process');
+            } else if (randomStatus === 'Selesai') {
+                statusResult.classList.add('status-completed');
+            } else {
+                statusResult.classList.add('status-rejected');
+            }
+            
+            // Isi data hasil pengecekan
+            document.getElementById('statusText').textContent = randomStatus;
+            document.getElementById('ticketResult').textContent = ticketNumber;
+            document.getElementById('dateResult').textContent = new Date().toLocaleDateString('id-ID');
+            document.getElementById('detailResult').textContent = `Pengaduan dengan nomor tiket ${ticketNumber} saat ini berstatus ${randomStatus}.`;
+        }
+    </script>
+</body>
+</html>
