@@ -94,10 +94,105 @@
             justify-content: center;
             border-radius: 50%;
             transition: background-color 0.3s;
+            z-index: 1001;
         }
         
         .nav-toggle:hover {
             background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Navigation Menu */
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 280px;
+            height: 100%;
+            background: white;
+            box-shadow: -2px 0 20px rgba(0,0,0,0.15);
+            z-index: 1000;
+            padding: 60px 25px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        .nav-menu.active {
+            transform: translateX(0);
+        }
+        
+        .nav-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #2c3e50;
+            min-width: 44px;
+            min-height: 44px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+        
+        .nav-close:hover {
+            background-color: #f5f7fa;
+        }
+        
+        .nav-title {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .nav-link {
+            color: #2c3e50;
+            text-decoration: none;
+            padding: 15px;
+            border-radius: 8px;
+            transition: background 0.3s;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover, .nav-link:focus {
+            background-color: #f5f7fa;
+            outline: none;
+        }
+        
+        .nav-link i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Overlay for navigation */
+        .nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+        }
+        
+        .nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
         
         /* Hero Section */
@@ -147,6 +242,54 @@
         .btn:hover, .btn:focus {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
+            outline: none;
+        }
+        
+        /* Statistics Section */
+        .statistics {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+            color: white;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+        
+        .stat-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
         }
         
         /* Features Section */
@@ -585,6 +728,8 @@
             max-width: 350px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             pointer-events: none;
+            display: flex;
+            align-items: center;
         }
         
         .toast.show {
@@ -598,6 +743,15 @@
         
         .toast.error {
             background-color: #e74c3c;
+        }
+        
+        .toast.info {
+            background-color: #3498db;
+        }
+        
+        .toast-icon {
+            margin-right: 12px;
+            font-size: 20px;
         }
         
         /* Loading spinner */
@@ -652,6 +806,18 @@
             .footer-links {
                 flex-direction: column;
                 gap: 15px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-card {
+                padding: 20px;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
             }
         }
 
@@ -734,6 +900,175 @@
             color: #7f8c8d;
             font-size: 0.9rem;
         }
+        
+        /* Skip link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #2c3e50;
+            color: white;
+            padding: 8px;
+            z-index: 10000;
+            transition: top 0.3s;
+        }
+        
+        .skip-link:focus {
+            top: 0;
+        }
+        
+        /* Loading overlay for form submission */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #3498db;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        /* Complaints list modal */
+        .complaints-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .complaints-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .complaints-content {
+            background-color: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 30px;
+            position: relative;
+        }
+        
+        .complaints-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #7f8c8d;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+        
+        .complaints-close:hover {
+            background-color: #f5f7fa;
+        }
+        
+        .complaints-header {
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .complaints-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .complaint-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .complaint-card.done {
+            border-left-color: #2ecc71;
+        }
+        
+        .complaint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .complaint-category {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .complaint-date {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        
+        .complaint-description {
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .complaint-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .complaint-id {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+        
+        .no-complaints {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+        
+        .no-complaints i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -741,7 +1076,63 @@
     <a href="#main-content" class="skip-link">Langsung ke konten utama</a>
 
     <!-- Toast Notification -->
-    <div id="toast" class="toast"></div>
+    <div id="toast" class="toast">
+        <i class="toast-icon"></i>
+        <span class="toast-message"></span>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Complaints Modal -->
+    <div class="complaints-modal" id="complaints-modal">
+        <div class="complaints-content">
+            <button class="complaints-close" id="complaints-close" aria-label="Tutup">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="complaints-header">
+                <h2>Daftar Pengaduan Anda</h2>
+                <p>Berikut adalah riwayat pengaduan yang telah Anda laporkan</p>
+            </div>
+            <div class="complaints-list" id="complaints-list">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="nav-overlay" id="nav-overlay"></div>
+    <div class="nav-menu" id="nav-menu">
+        <button class="nav-close" id="nav-close" aria-label="Tutup menu">
+            <i class="fas fa-times"></i>
+        </button>
+        <h3 class="nav-title">Menu Navigasi</h3>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-link">
+                <i class="fas fa-home"></i> Beranda
+            </a>
+            <a href="tentang-kami.html" class="nav-link">
+                <i class="fas fa-info-circle"></i> Tentang Kami
+            </a>
+            <a href="#form-section" class="nav-link">
+                <i class="fas fa-edit"></i> Buat Pengaduan
+            </a>
+            <a href="#" class="nav-link" id="view-complaints-link">
+                <i class="fas fa-list"></i> Lihat Pengaduan
+            </a>
+            <a href="download.html" class="nav-link">
+                <i class="fas fa-download"></i> Download App
+            </a>
+            <a href="help.html" class="nav-link">
+                <i class="fas fa-question-circle"></i> Bantuan
+            </a>
+            <a href="help.html#kontak" class="nav-link">
+                <i class="fas fa-phone-alt"></i> Kontak
+            </a>
+        </nav>
+    </div>
 
     <header>
         <div class="container">
@@ -750,7 +1141,7 @@
                     <i class="fas fa-house-damage" aria-hidden="true"></i>
                     <h1>AduanMasyarakat</h1>
                 </div>
-                <button class="nav-toggle" aria-label="Buka menu navigasi">
+                <button class="nav-toggle" id="nav-toggle" aria-label="Buka menu navigasi">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
@@ -764,6 +1155,30 @@
                     <h2>Laporkan masalah Anda dengan mudah dan cepat</h2>
                     <p>Aplikasi pengaduan masyarakat real-time yang memudahkan Anda melaporkan masalah di lingkungan sekitar dan melacak status pengaduannya.</p>
                     <a href="#download" class="btn">Download Sekarang</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistics Section - Baru Ditambahkan -->
+        <section class="statistics" id="statistics">
+            <div class="container">
+                <h2 class="section-title">Statistik Pengaduan</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-inbox stat-icon"></i>
+                        <span class="stat-number" id="total-complaints">0</span>
+                        <span class="stat-label">Total Pengaduan Masuk</span>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-tasks stat-icon"></i>
+                        <span class="stat-number" id="processed-complaints">0</span>
+                        <span class="stat-label">Sedang Diproses</span>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-check-circle stat-icon"></i>
+                        <span class="stat-number" id="resolved-complaints">0</span>
+                        <span class="stat-label">Terselesaikan</span>
+                    </div>
                 </div>
             </div>
         </section>
@@ -816,24 +1231,10 @@
                                 <h3 style="text-align: center; margin-bottom: 20px; color: #2c3e50;">Daftar Pengaduan</h3>
                                 
                                 <div id="complaints-container">
-                                    <div class="complaint-item">
-                                        <h4>Jalan Rusak <span class="badge">Infrastruktur</span></h4>
-                                        <p>Jalan utama di Desa Suka Maju mengalami kerusakan parah...</p>
-                                        <span class="status process">Diproses</span>
-                                    </div>
-                                    <div class="complaint-item">
-                                        <h4>Sampah Menumpuk <span class="badge">Kebersihan</span></h4>
-                                        <p>Tumpukan sampah di RT 05 sudah tidak terangkut selama 3 hari...</p>
-                                        <span class="status done">Selesai</span>
-                                    </div>
-                                    <div class="complaint-item">
-                                        <h4>Lampu Jalan Mati <span class="badge">Keamanan</span></h4>
-                                        <p>Lampu jalan di Jl. Merdeka no. 24 sudah mati selama 2 minggu...</p>
-                                        <span class="status process">Diproses</span>
-                                    </div>
+                                    <!-- Will be populated by JavaScript -->
                                 </div>
                                 
-                                <div class="floating-btn" aria-label="Buat pengaduan baru">
+                                <div class="floating-btn" id="new-complaint-btn" aria-label="Buat pengaduan baru">
                                     <i class="fas fa-plus"></i>
                                 </div>
                             </div>
@@ -954,91 +1355,114 @@
     </footer>
 
     <script>
+        // DOM Elements
+        const navToggle = document.getElementById('nav-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        const navClose = document.getElementById('nav-close');
+        const navOverlay = document.getElementById('nav-overlay');
+        const viewComplaintsLink = document.getElementById('view-complaints-link');
+        const complaintsModal = document.getElementById('complaints-modal');
+        const complaintsClose = document.getElementById('complaints-close');
+        const complaintsList = document.getElementById('complaints-list');
+        const newComplaintBtn = document.getElementById('new-complaint-btn');
+        const loadingOverlay = document.getElementById('loading-overlay');
+
+        // Navigation Menu
+        function openNavMenu() {
+            navMenu.classList.add('active');
+            navOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeNavMenu() {
+            navMenu.classList.remove('active');
+            navOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        navToggle.addEventListener('click', openNavMenu);
+        navClose.addEventListener('click', closeNavMenu);
+        navOverlay.addEventListener('click', closeNavMenu);
+
+        // View Complaints
+        viewComplaintsLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            closeNavMenu();
+            showComplaintsModal();
+        });
+
+        function showComplaintsModal() {
+            const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+            
+            if (complaints.length === 0) {
+                complaintsList.innerHTML = `
+                    <div class="no-complaints">
+                        <i class="fas fa-inbox"></i>
+                        <h3>Belum ada pengaduan</h3>
+                        <p>Anda belum membuat pengaduan apapun. Klik tombol di bawah untuk membuat pengaduan pertama Anda.</p>
+                        <a href="#form-section" class="btn" style="margin-top: 20px;">Buat Pengaduan</a>
+                    </div>
+                `;
+            } else {
+                complaintsList.innerHTML = '';
+                complaints.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                
+                complaints.forEach(complaint => {
+                    const date = new Date(complaint.timestamp).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    const complaintCard = document.createElement('div');
+                    complaintCard.className = `complaint-card ${complaint.status === 'done' ? 'done' : ''}`;
+                    
+                    complaintCard.innerHTML = `
+                        <div class="complaint-header">
+                            <span class="complaint-category">${escapeHtml(complaint.category)}</span>
+                            <span class="complaint-date">${date}</span>
+                        </div>
+                        <div class="complaint-description">
+                            ${escapeHtml(complaint.description)}
+                        </div>
+                        <div class="complaint-footer">
+                            <span class="complaint-id">ID: ${complaint.id}</span>
+                            <span class="status ${complaint.status === 'done' ? 'done' : 'process'}">
+                                ${complaint.status === 'done' ? 'Selesai' : 'Diproses'}
+                            </span>
+                        </div>
+                    `;
+                    
+                    complaintsList.appendChild(complaintCard);
+                });
+            }
+            
+            complaintsModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        complaintsClose.addEventListener('click', function() {
+            complaintsModal.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+
+        complaintsModal.addEventListener('click', function(e) {
+            if (e.target === complaintsModal) {
+                complaintsModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // New complaint button in phone mockup
+        newComplaintBtn.addEventListener('click', function() {
+            document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
+        });
+
         // Menu navigasi mobile
         document.querySelector('.nav-toggle').addEventListener('click', function() {
-            // Buat modal/navigation drawer
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                right: 0;
-                width: 280px;
-                height: 100%;
-                background: white;
-                box-shadow: -2px 0 20px rgba(0,0,0,0.15);
-                z-index: 1000;
-                padding: 60px 25px;
-                transform: translateX(100%);
-                transition: transform 0.3s ease;
-            `;
-            
-            modal.innerHTML = `
-                <button style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 24px; color: #2c3e50; min-width: 44px; min-height: 44px; border-radius: 50%; transition: background-color 0.3s;" aria-label="Tutup menu" onmouseover="this.style.backgroundColor='#f5f7fa'" onmouseout="this.style.backgroundColor='transparent'">×</button>
-                <h3 style="color: #2c3e50; margin-bottom: 30px; font-size: 1.5rem; font-weight: 600;">Menu Navigasi</h3>
-                <nav style="display: flex; flex-direction: column; gap: 15px;">
-                    <a href="index.html" style="color: #2c3e50; text-decoration: none; padding: 15px; border-radius: 8px; transition: background 0.3s; min-height: 44px; display: flex; align-items: center; font-weight: 500;" onmouseover="this.style.backgroundColor='#f5f7fa'" onmouseout="this.style.backgroundColor='transparent'"><i class="fas fa-home" style="margin-right: 12px; width: 20px; text-align: center;"></i> Beranda</a>
-                    <a href="tentang-kami.html" style="color: #2c3e50; text-decoration: none; padding: 15px; border-radius: 8px; transition: background 0.3s; min-height: 44px; display: flex; align-items: center; font-weight: 500;" onmouseover="this.style.backgroundColor='#f5f7fa'" onmouseout="this.style.backgroundColor='transparent'"><i class="fas fa-info-circle" style="margin-right: 12px; width: 20px; text-align: center;"></i> Tentang Kami</a>
-                    <a href="#form-section" style="color: #2c3e50; text-decoration: none; padding: 15px; border-radius: 8px; transition: background 0.3s; min-height: 44px; display: flex; align-items: center; font-weight: 500;" onmouseover="this.style.backgroundColor='#f5f7fa'" onmouseout="this.style.backgroundColor='transparent'"><i class="fas fa-edit" style="margin-right: 12px; width: 20px; text-align: center;"></i> Buat Pengaduan</a>
-                    <a href="download.html" style="color: #2c3e50; text-decoration: none; padding: 15px; border-radius: 8px; transition: background 0.3s; min-height: 44px; display: flex; align-items: center; font-weight: 500;" onmouseover="this.style.backgroundColor='#f5f7fa'" onmouseout="this.style.backgroundColor='transparent'"><i class="fas fa-download" style="margin-right: 12px; width: 20px; text-align: center;"></i> Download App</a>
-                    <a href="help.html" style="color: #2c3e50; text-decoration: none; padding: 15px; border-radius: 8px; transition: background 0.3s; min-height: 44px; display: flex; align-items: center; font-weight: 500;" onmouseover="this.style.backgroundColor='#f5f7fa'" onmouseout="this.style.backgroundColor='transparent'"><i class="fas fa-question-circle" style="margin-right: 12px; width: 20px; text-align: center;"></i> Bantuan</a>
-                    <a href="help.html#kontak" style="color: #2c3e50; text-decoration: none; padding: 15px; border-radius: 8px; transition: background 0.3s; min-height: 44px; display: flex; align-items: center; font-weight: 500;" onmouseover="this.style.backgroundColor='#f5f7fa'" onmouseout="this.style.backgroundColor='transparent'"><i class="fas fa-phone-alt" style="margin-right: 12px; width: 20px; text-align: center;"></i> Kontak</a>
-                </nav>
-            `;
-            
-            document.body.appendChild(modal);
-            
-            // Animate in
-            setTimeout(() => modal.style.transform = 'translateX(0)', 10);
-            
-            // Focus trap for accessibility
-            const focusableElements = modal.querySelectorAll('a, button');
-            const firstFocusable = focusableElements[0];
-            const lastFocusable = focusableElements[focusableElements.length - 1];
-            
-            firstFocusable.focus();
-            
-            modal.addEventListener('keydown', function(e) {
-                if (e.key === 'Tab') {
-                    if (e.shiftKey) {
-                        if (document.activeElement === firstFocusable) {
-                            e.preventDefault();
-                            lastFocusable.focus();
-                        }
-                    } else {
-                        if (document.activeElement === lastFocusable) {
-                            e.preventDefault();
-                            firstFocusable.focus();
-                        }
-                    }
-                }
-                
-                if (e.key === 'Escape') {
-                    modal.style.transform = 'translateX(100%)';
-                    setTimeout(() => modal.remove(), 300);
-                }
-            });
-            
-            // Close button
-            modal.querySelector('button').addEventListener('click', function() {
-                modal.style.transform = 'translateX(100%)';
-                setTimeout(() => modal.remove(), 300);
-            });
-            
-            // Close when clicking outside
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    modal.style.transform = 'translateX(100%)';
-                    setTimeout(() => modal.remove(), 300);
-                }
-            });
-            
-            // Close when clicking on links
-            modal.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', function() {
-                    modal.style.transform = 'translateX(100%)';
-                    setTimeout(() => modal.remove(), 300);
-                });
-            });
+            openNavMenu();
         });
 
         // Animasi sederhana untuk tombol
@@ -1214,7 +1638,19 @@
             // Fungsi untuk menampilkan toast notification
             function showToast(message, type = 'success') {
                 const toast = document.getElementById('toast');
-                toast.textContent = message;
+                const toastIcon = toast.querySelector('.toast-icon');
+                const toastMessage = toast.querySelector('.toast-message');
+                
+                // Set icon based on type
+                if (type === 'success') {
+                    toastIcon.className = 'toast-icon fas fa-check-circle';
+                } else if (type === 'error') {
+                    toastIcon.className = 'toast-icon fas fa-exclamation-circle';
+                } else {
+                    toastIcon.className = 'toast-icon fas fa-info-circle';
+                }
+                
+                toastMessage.textContent = message;
                 toast.className = `toast ${type} show`;
                 
                 setTimeout(() => {
@@ -1228,7 +1664,7 @@
                 const existingComplaints = JSON.parse(localStorage.getItem('complaints')) || [];
                 
                 // Tambahkan ID dan timestamp ke data pengaduan
-                complaintData.id = Date.now();
+                complaintData.id = 'ADU-' + Date.now();
                 complaintData.timestamp = new Date().toISOString();
                 complaintData.status = 'process'; // Status default
                 
@@ -1239,6 +1675,44 @@
                 localStorage.setItem('complaints', JSON.stringify(existingComplaints));
                 
                 return complaintData;
+            }
+            
+            // Fungsi untuk menghitung dan menampilkan statistik pengaduan
+            function updateComplaintStatistics() {
+                const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+                
+                // Hitung total pengaduan
+                const totalComplaints = complaints.length;
+                
+                // Hitung pengaduan yang sedang diproses
+                const processedComplaints = complaints.filter(complaint => complaint.status === 'process').length;
+                
+                // Hitung pengaduan yang selesai
+                const resolvedComplaints = complaints.filter(complaint => complaint.status === 'done').length;
+                
+                // Update elemen HTML dengan animasi
+                animateValue('total-complaints', 0, totalComplaints, 1000);
+                animateValue('processed-complaints', 0, processedComplaints, 1000);
+                animateValue('resolved-complaints', 0, resolvedComplaints, 1000);
+            }
+
+            // Fungsi untuk animasi angka (menghitung dari 0 ke nilai target)
+            function animateValue(id, start, end, duration) {
+                const element = document.getElementById(id);
+                if (!element) return;
+                
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    const value = Math.floor(progress * (end - start) + start);
+                    element.innerHTML = value.toLocaleString('id-ID');
+                    
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    }
+                };
+                window.requestAnimationFrame(step);
             }
             
             // Fungsi untuk menampilkan daftar pengaduan
@@ -1260,8 +1734,8 @@
                 // Urutkan berdasarkan timestamp (terbaru pertama)
                 complaints.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                 
-                // Tampilkan maksimal 5 pengaduan terbaru
-                const recentComplaints = complaints.slice(0, 5);
+                // Tampilkan maksimal 3 pengaduan terbaru
+                const recentComplaints = complaints.slice(0, 3);
                 
                 let complaintsHTML = '';
                 recentComplaints.forEach(complaint => {
@@ -1276,7 +1750,7 @@
                     
                     complaintsHTML += `
                         <div class="complaint-item">
-                            <h4>${escapeHtml(complaint.category)} <span class="badge">${complaint.category}</span></h4>
+                            <h4>${escapeHtml(getCategoryLabel(complaint.category))} <span class="badge">${getCategoryLabel(complaint.category)}</span></h4>
                             <p>${escapeHtml(complaint.description.substring(0, 60))}${complaint.description.length > 60 ? '...' : ''}</p>
                             <p><small>${date}</small></p>
                             <span class="status ${statusClass}">${statusText}</span>
@@ -1285,6 +1759,17 @@
                 });
                 
                 complaintsContainer.innerHTML = complaintsHTML;
+            }
+            
+            function getCategoryLabel(categoryValue) {
+                const categories = {
+                    'infrastruktur': 'Infrastruktur',
+                    'kebersihan': 'Kebersihan',
+                    'keamanan': 'Keamanan',
+                    'lainnya': 'Lainnya'
+                };
+                
+                return categories[categoryValue] || 'Lainnya';
             }
             
             // Update form submission untuk menyimpan data ke localStorage
@@ -1318,6 +1803,7 @@
                 submitText.style.display = 'none';
                 submitLoading.style.display = 'inline';
                 submitButton.disabled = true;
+                loadingOverlay.classList.add('active');
                 
                 // Ambil data dari form
                 const formData = new FormData(form);
@@ -1335,6 +1821,9 @@
                 
                 // Perbarui tampilan daftar pengaduan
                 displayComplaints();
+                
+                // Perbarui statistik
+                updateComplaintStatistics();
                 
                 // Kirim data ke Formspree
                 fetch(form.action, {
@@ -1363,11 +1852,13 @@
                     submitText.style.display = 'inline';
                     submitLoading.style.display = 'none';
                     submitButton.disabled = false;
+                    loadingOverlay.classList.remove('active');
                 });
             });
             
-            // Tampilkan daftar pengaduan saat halaman dimuat
+            // Tampilkan daftar pengaduan dan statistik saat halaman dimuat
             displayComplaints();
+            updateComplaintStatistics();
         });
 
         // Register Service Worker
