@@ -1069,6 +1069,151 @@
             margin-bottom: 15px;
             display: block;
         }
+        
+        /* Login/Register Modal Styles */
+        .auth-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .auth-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .auth-content {
+            background-color: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 450px;
+            padding: 30px;
+            position: relative;
+        }
+        
+        .auth-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #7f8c8d;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+        
+        .auth-close:hover {
+            background-color: #f5f7fa;
+        }
+        
+        .auth-header {
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .auth-header h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #7f8c8d;
+            transition: all 0.3s;
+        }
+        
+        .auth-tab.active {
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+        }
+        
+        .auth-form {
+            display: none;
+        }
+        
+        .auth-form.active {
+            display: block;
+        }
+        
+        .auth-footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #7f8c8d;
+        }
+        
+        .auth-footer a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            margin-right: 15px;
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .user-name {
+            font-weight: 500;
+        }
+        
+        .login-required {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .login-required i {
+            font-size: 48px;
+            color: #3498db;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .login-required p {
+            margin-bottom: 20px;
+            color: #7f8c8d;
+        }
     </style>
 </head>
 <body>
@@ -1102,6 +1247,60 @@
         </div>
     </div>
 
+    <!-- Auth Modal -->
+    <div class="auth-modal" id="auth-modal">
+        <div class="auth-content">
+            <button class="auth-close" id="auth-close" aria-label="Tutup">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="auth-header">
+                <h2>Selamat Datang</h2>
+                <p>Masuk atau daftar untuk mengakses layanan pengaduan</p>
+            </div>
+            <div class="auth-tabs">
+                <div class="auth-tab active" data-tab="login">Masuk</div>
+                <div class="auth-tab" data-tab="register">Daftar</div>
+            </div>
+            <form id="login-form" class="auth-form active">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Masuk</button>
+                <div class="auth-footer">
+                    <p>Lupa password? <a href="#" id="forgot-password">Klik di sini</a></p>
+                </div>
+            </form>
+            <form id="register-form" class="auth-form">
+                <div class="form-group">
+                    <label for="register-name">Nama Lengkap</label>
+                    <input type="text" id="register-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-phone">Nomor Telepon</label>
+                    <input type="tel" id="register-phone">
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm">Konfirmasi Password</label>
+                    <input type="password" id="register-confirm" required>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Daftar</button>
+            </form>
+        </div>
+    </div>
+
     <!-- Navigation Menu -->
     <div class="nav-overlay" id="nav-overlay"></div>
     <div class="nav-menu" id="nav-menu">
@@ -1116,7 +1315,7 @@
             <a href="tentang-kami.html" class="nav-link">
                 <i class="fas fa-info-circle"></i> Tentang Kami
             </a>
-            <a href="#form-section" class="nav-link">
+            <a href="#form-section" class="nav-link" id="nav-complaint-link">
                 <i class="fas fa-edit"></i> Buat Pengaduan
             </a>
             <a href="#" class="nav-link" id="view-complaints-link">
@@ -1131,6 +1330,22 @@
             <a href="help.html#kontak" class="nav-link">
                 <i class="fas fa-phone-alt"></i> Kontak
             </a>
+            <div id="nav-auth-section">
+                <a href="#" class="nav-link" id="nav-login-link">
+                    <i class="fas fa-sign-in-alt"></i> Masuk
+                </a>
+                <a href="#" class="nav-link" id="nav-register-link">
+                    <i class="fas fa-user-plus"></i> Daftar
+                </a>
+            </div>
+            <div id="nav-user-section" style="display: none;">
+                <a href="#" class="nav-link" id="nav-profile-link">
+                    <i class="fas fa-user-circle"></i> Profil
+                </a>
+                <a href="#" class="nav-link" id="nav-logout-link">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                </a>
+            </div>
         </nav>
     </div>
 
@@ -1140,6 +1355,12 @@
                 <div class="logo">
                     <i class="fas fa-house-damage" aria-hidden="true"></i>
                     <h1>AduanMasyarakat</h1>
+                </div>
+                <div id="header-user-section" style="display: none;">
+                    <div class="user-profile">
+                        <div class="user-avatar" id="user-avatar">U</div>
+                        <span class="user-name" id="user-name">Pengguna</span>
+                    </div>
                 </div>
                 <button class="nav-toggle" id="nav-toggle" aria-label="Buka menu navigasi">
                     <i class="fas fa-bars"></i>
@@ -1248,6 +1469,12 @@
             <div class="container">
                 <h2 class="section-title">Buat Pengaduan Baru</h2>
                 <div class="form-container">
+                    <div id="login-required-message" class="login-required" style="display: none;">
+                        <i class="fas fa-lock"></i>
+                        <h3>Anda perlu masuk untuk membuat pengaduan</h3>
+                        <p>Silakan masuk atau daftar untuk mengakses layanan pengaduan kami</p>
+                        <button class="btn" id="login-required-btn">Masuk / Daftar</button>
+                    </div>
                     <form action="https://formspree.io/f/mwpnwrzk" method="POST" enctype="multipart/form-data" id="complaint-form">
                       <input type="hidden" name="_subject" value="Pengaduan Baru dari Website">
                       <input type="hidden" name="_replyto" value="aduanmasyarakat5@gmail.com">
@@ -1366,6 +1593,49 @@
         const complaintsList = document.getElementById('complaints-list');
         const newComplaintBtn = document.getElementById('new-complaint-btn');
         const loadingOverlay = document.getElementById('loading-overlay');
+        const authModal = document.getElementById('auth-modal');
+        const authClose = document.getElementById('auth-close');
+        const authTabs = document.querySelectorAll('.auth-tab');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const loginRequiredMessage = document.getElementById('login-required-message');
+        const complaintForm = document.getElementById('complaint-form');
+        const loginRequiredBtn = document.getElementById('login-required-btn');
+        const navLoginLink = document.getElementById('nav-login-link');
+        const navRegisterLink = document.getElementById('nav-register-link');
+        const navLogoutLink = document.getElementById('nav-logout-link');
+        const navAuthSection = document.getElementById('nav-auth-section');
+        const navUserSection = document.getElementById('nav-user-section');
+        const headerUserSection = document.getElementById('header-user-section');
+        const userAvatar = document.getElementById('user-avatar');
+        const userName = document.getElementById('user-name');
+        const navComplaintLink = document.getElementById('nav-complaint-link');
+
+        // Check if user is logged in
+        function checkAuthStatus() {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            
+            if (isLoggedIn && user) {
+                // User is logged in
+                navAuthSection.style.display = 'none';
+                navUserSection.style.display = 'block';
+                headerUserSection.style.display = 'flex';
+                loginRequiredMessage.style.display = 'none';
+                complaintForm.style.display = 'block';
+                
+                // Set user info
+                userAvatar.textContent = user.name.charAt(0).toUpperCase();
+                userName.textContent = user.name;
+            } else {
+                // User is not logged in
+                navAuthSection.style.display = 'block';
+                navUserSection.style.display = 'none';
+                headerUserSection.style.display = 'none';
+                loginRequiredMessage.style.display = 'block';
+                complaintForm.style.display = 'none';
+            }
+        }
 
         // Navigation Menu
         function openNavMenu() {
@@ -1384,17 +1654,197 @@
         navClose.addEventListener('click', closeNavMenu);
         navOverlay.addEventListener('click', closeNavMenu);
 
+        // Auth Tabs
+        authTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.getAttribute('data-tab');
+                
+                // Update active tab
+                authTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Show active form
+                document.querySelectorAll('.auth-form').forEach(form => {
+                    form.classList.remove('active');
+                });
+                document.getElementById(`${tabName}-form`).classList.add('active');
+            });
+        });
+
+        // Open Auth Modal
+        function openAuthModal(activeTab = 'login') {
+            // Set active tab
+            authTabs.forEach(tab => {
+                if (tab.getAttribute('data-tab') === activeTab) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            // Show active form
+            document.querySelectorAll('.auth-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            document.getElementById(`${activeTab}-form`).classList.add('active');
+            
+            authModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close Auth Modal
+        function closeAuthModal() {
+            authModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        authClose.addEventListener('click', closeAuthModal);
+        authModal.addEventListener('click', (e) => {
+            if (e.target === authModal) {
+                closeAuthModal();
+            }
+        });
+
+        // Login Form Submission
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Simple validation
+            if (!email || !password) {
+                showToast('Harap isi semua field', 'error');
+                return;
+            }
+            
+            // Check if user exists
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                // Login successful
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                localStorage.setItem('isLoggedIn', 'true');
+                
+                showToast('Login berhasil!', 'success');
+                closeAuthModal();
+                checkAuthStatus();
+                
+                // Clear form
+                loginForm.reset();
+            } else {
+                showToast('Email atau password salah', 'error');
+            }
+        });
+
+        // Register Form Submission
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const phone = document.getElementById('register-phone').value;
+            const password = document.getElementById('register-password').value;
+            const confirm = document.getElementById('register-confirm').value;
+            
+            // Simple validation
+            if (!name || !email || !password || !confirm) {
+                showToast('Harap isi semua field yang wajib', 'error');
+                return;
+            }
+            
+            if (password !== confirm) {
+                showToast('Konfirmasi password tidak cocok', 'error');
+                return;
+            }
+            
+            // Check if user already exists
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            if (users.some(user => user.email === email)) {
+                showToast('Email sudah terdaftar', 'error');
+                return;
+            }
+            
+            // Create new user
+            const newUser = {
+                id: Date.now(),
+                name,
+                email,
+                phone,
+                password, // Note: In a real app, password should be hashed
+                createdAt: new Date().toISOString()
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            // Auto login after registration
+            localStorage.setItem('currentUser', JSON.stringify(newUser));
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            showToast('Pendaftaran berhasil! Anda telah masuk.', 'success');
+            closeAuthModal();
+            checkAuthStatus();
+            
+            // Clear form
+            registerForm.reset();
+        });
+
+        // Logout
+        navLogoutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            localStorage.removeItem('currentUser');
+            localStorage.setItem('isLoggedIn', 'false');
+            
+            showToast('Anda telah logout', 'info');
+            closeNavMenu();
+            checkAuthStatus();
+        });
+
+        // Auth links
+        navLoginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeNavMenu();
+            openAuthModal('login');
+        });
+
+        navRegisterLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeNavMenu();
+            openAuthModal('register');
+        });
+
+        loginRequiredBtn.addEventListener('click', () => {
+            openAuthModal('login');
+        });
+
         // View Complaints
         viewComplaintsLink.addEventListener('click', function(e) {
             e.preventDefault();
+            
+            // Check if user is logged in
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                closeNavMenu();
+                openAuthModal('login');
+                showToast('Silakan login untuk melihat pengaduan', 'info');
+                return;
+            }
+            
             closeNavMenu();
             showComplaintsModal();
         });
 
         function showComplaintsModal() {
             const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             
-            if (complaints.length === 0) {
+            // Filter complaints by current user
+            const userComplaints = complaints.filter(complaint => complaint.userId === currentUser.id);
+            
+            if (userComplaints.length === 0) {
                 complaintsList.innerHTML = `
                     <div class="no-complaints">
                         <i class="fas fa-inbox"></i>
@@ -1405,9 +1855,9 @@
                 `;
             } else {
                 complaintsList.innerHTML = '';
-                complaints.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                userComplaints.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                 
-                complaints.forEach(complaint => {
+                userComplaints.forEach(complaint => {
                     const date = new Date(complaint.timestamp).toLocaleDateString('id-ID', {
                         day: 'numeric',
                         month: 'long',
@@ -1457,7 +1907,27 @@
 
         // New complaint button in phone mockup
         newComplaintBtn.addEventListener('click', function() {
+            // Check if user is logged in
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                openAuthModal('login');
+                showToast('Silakan login untuk membuat pengaduan', 'info');
+                return;
+            }
+            
             document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Navigation complaint link
+        navComplaintLink.addEventListener('click', function(e) {
+            // Check if user is logged in
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                e.preventDefault();
+                closeNavMenu();
+                openAuthModal('login');
+                showToast('Silakan login untuk membuat pengaduan', 'info');
+            }
         });
 
         // Menu navigasi mobile
@@ -1662,11 +2132,13 @@
             function saveComplaintToLocal(complaintData) {
                 // Ambil data yang sudah ada dari localStorage
                 const existingComplaints = JSON.parse(localStorage.getItem('complaints')) || [];
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
                 
-                // Tambahkan ID dan timestamp ke data pengaduan
+                // Tambahkan ID, timestamp, dan userId ke data pengaduan
                 complaintData.id = 'ADU-' + Date.now();
                 complaintData.timestamp = new Date().toISOString();
                 complaintData.status = 'process'; // Status default
+                complaintData.userId = currentUser.id;
                 
                 // Tambahkan pengaduan baru ke array
                 existingComplaints.push(complaintData);
@@ -1719,8 +2191,15 @@
             function displayComplaints() {
                 const complaintsContainer = document.getElementById('complaints-container');
                 const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
                 
-                if (complaints.length === 0) {
+                // Filter complaints by current user if logged in
+                let userComplaints = [];
+                if (currentUser) {
+                    userComplaints = complaints.filter(complaint => complaint.userId === currentUser.id);
+                }
+                
+                if (userComplaints.length === 0) {
                     complaintsContainer.innerHTML = `
                         <div style="text-align: center; padding: 40px; color: #7f8c8d;">
                             <i class="fas fa-inbox" style="font-size: 40px; margin-bottom: 15px;"></i>
@@ -1732,10 +2211,10 @@
                 }
                 
                 // Urutkan berdasarkan timestamp (terbaru pertama)
-                complaints.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                userComplaints.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                 
                 // Tampilkan maksimal 3 pengaduan terbaru
-                const recentComplaints = complaints.slice(0, 3);
+                const recentComplaints = userComplaints.slice(0, 3);
                 
                 let complaintsHTML = '';
                 recentComplaints.forEach(complaint => {
@@ -1780,6 +2259,13 @@
             
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
+                
+                // Check if user is logged in
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                if (!isLoggedIn) {
+                    showToast('Silakan login untuk membuat pengaduan', 'error');
+                    return;
+                }
                 
                 // Validasi form
                 const requiredFields = form.querySelectorAll('[required]');
@@ -1857,6 +2343,7 @@
             });
             
             // Tampilkan daftar pengaduan dan statistik saat halaman dimuat
+            checkAuthStatus();
             displayComplaints();
             updateComplaintStatistics();
         });
