@@ -1117,6 +1117,8 @@
             align-items: center;
             justify-content: center;
             transition: background-color 0.3s;
+            min-width: 44px;
+            min-height: 44px;
         }
         
         .auth-close:hover {
@@ -1147,6 +1149,10 @@
             font-weight: 600;
             color: #7f8c8d;
             transition: all 0.3s;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .auth-tab.active {
@@ -1213,6 +1219,40 @@
         .login-required p {
             margin-bottom: 20px;
             color: #7f8c8d;
+        }
+        
+        /* Password strength indicator */
+        .password-strength-container {
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .password-strength-bar {
+            height: 5px;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+            width: 0;
+            margin-bottom: 5px;
+        }
+        
+        .password-weak {
+            background-color: #e74c3c;
+            width: 33%;
+        }
+        
+        .password-medium {
+            background-color: #f39c12;
+            width: 66%;
+        }
+        
+        .password-strong {
+            background-color: #2ecc71;
+            width: 100%;
+        }
+        
+        .password-strength-text {
+            font-size: 12px;
+            text-align: right;
         }
     </style>
 </head>
@@ -1291,6 +1331,10 @@
                 <div class="form-group">
                     <label for="register-password">Password</label>
                     <input type="password" id="register-password" required>
+                    <div class="password-strength-container">
+                        <div class="password-strength-bar" id="password-strength-bar"></div>
+                        <div class="password-strength-text" id="password-strength-text"></div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="register-confirm">Konfirmasi Password</label>
@@ -1431,7 +1475,7 @@
                     <div class="feature-card">
                         <i class="fas fa-shield-alt" aria-hidden="true"></i>
                         <h3>Privasi Terjaga</h3>
-                        <p>Laporkan secara anonim atau dengan identitas yang terlindungi</p>
+                        <p>Laporkan secara anonim atau dengan identidad yang terlindungi</p>
                     </div>
                     <div class="feature-card">
                         <i class="fas fa-bell" aria-hidden="true"></i>
@@ -1582,6 +1626,62 @@
     </footer>
 
     <script>
+        // Simple password hashing function (for demonstration only)
+        // In a real application, use a proper hashing library or backend
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hash = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hash))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+        }
+
+        // Password strength checker
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            
+            // Length check
+            if (password.length >= 8) strength++;
+            if (password.length >= 12) strength++;
+            
+            // Character variety checks
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            return strength;
+        }
+
+        // Update password strength indicator
+        function updatePasswordStrength(password) {
+            const strengthBar = document.getElementById('password-strength-bar');
+            const strengthText = document.getElementById('password-strength-text');
+            
+            if (!password) {
+                strengthBar.className = 'password-strength-bar';
+                strengthBar.style.width = '0';
+                strengthText.textContent = '';
+                return;
+            }
+            
+            const strength = checkPasswordStrength(password);
+            
+            if (strength <= 2) {
+                strengthBar.className = 'password-strength-bar password-weak';
+                strengthText.textContent = 'Lemah';
+                strengthText.style.color = '#e74c3c';
+            } else if (strength <= 4) {
+                strengthBar.className = 'password-strength-bar password-medium';
+                strengthText.textContent = 'Sedang';
+                strengthText.style.color = '#f39c12';
+            } else {
+                strengthBar.className = 'password-strength-bar password-strong';
+                strengthText.textContent = 'Kuat';
+                strengthText.style.color = '#2ecc71';
+            }
+        }
+
         // DOM Elements
         const navToggle = document.getElementById('nav-toggle');
         const navMenu = document.getElementById('nav-menu');
@@ -1610,6 +1710,14 @@
         const userAvatar = document.getElementById('user-avatar');
         const userName = document.getElementById('user-name');
         const navComplaintLink = document.getElementById('nav-complaint-link');
+        const registerPassword = document.getElementById('register-password');
+
+        // Event listener untuk password strength
+        if (registerPassword) {
+            registerPassword.addEventListener('input', function(e) {
+                updatePasswordStrength(e.target.value);
+            });
+        }
 
         // Check if user is logged in
         function checkAuthStatus() {
@@ -1706,7 +1814,7 @@
         });
 
         // Login Form Submission
-        loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const email = document.getElementById('login-email').value;
@@ -1718,28 +1826,36 @@
                 return;
             }
             
-            // Check if user exists
-            const users = JSON.parse(localStorage.getItem('users')) || [];
-            const user = users.find(u => u.email === email && u.password === password);
-            
-            if (user) {
-                // Login successful
-                localStorage.setItem('currentUser', JSON.stringify(user));
-                localStorage.setItem('isLoggedIn', 'true');
+            try {
+                // Hash password input
+                const hashedPassword = await hashPassword(password);
                 
-                showToast('Login berhasil!', 'success');
-                closeAuthModal();
-                checkAuthStatus();
+                // Check if user exists
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                const user = users.find(u => u.email === email && u.password === hashedPassword);
                 
-                // Clear form
-                loginForm.reset();
-            } else {
-                showToast('Email atau password salah', 'error');
+                if (user) {
+                    // Login successful
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    localStorage.setItem('isLoggedIn', 'true');
+                    
+                    showToast('Login berhasil!', 'success');
+                    closeAuthModal();
+                    checkAuthStatus();
+                    
+                    // Clear form
+                    loginForm.reset();
+                } else {
+                    showToast('Email atau password salah', 'error');
+                }
+            } catch (error) {
+                showToast('Terjadi kesalahan saat login', 'error');
+                console.error('Login error:', error);
             }
         });
 
         // Register Form Submission
-        registerForm.addEventListener('submit', (e) => {
+        registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const name = document.getElementById('register-name').value;
@@ -1759,6 +1875,12 @@
                 return;
             }
             
+            // Check password strength
+            if (checkPasswordStrength(password) < 3) {
+                showToast('Password terlalu lemah. Gunakan kombinasi huruf, angka, dan karakter khusus', 'error');
+                return;
+            }
+            
             // Check if user already exists
             const users = JSON.parse(localStorage.getItem('users')) || [];
             if (users.some(user => user.email === email)) {
@@ -1766,29 +1888,39 @@
                 return;
             }
             
-            // Create new user
-            const newUser = {
-                id: Date.now(),
-                name,
-                email,
-                phone,
-                password, // Note: In a real app, password should be hashed
-                createdAt: new Date().toISOString()
-            };
-            
-            users.push(newUser);
-            localStorage.setItem('users', JSON.stringify(users));
-            
-            // Auto login after registration
-            localStorage.setItem('currentUser', JSON.stringify(newUser));
-            localStorage.setItem('isLoggedIn', 'true');
-            
-            showToast('Pendaftaran berhasil! Anda telah masuk.', 'success');
-            closeAuthModal();
-            checkAuthStatus();
-            
-            // Clear form
-            registerForm.reset();
+            try {
+                // Hash password sebelum disimpan
+                const hashedPassword = await hashPassword(password);
+                
+                // Create new user
+                const newUser = {
+                    id: Date.now(),
+                    name,
+                    email,
+                    phone,
+                    password: hashedPassword, // Simpan password yang sudah di-hash
+                    createdAt: new Date().toISOString()
+                };
+                
+                users.push(newUser);
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                // Auto login after registration
+                localStorage.setItem('currentUser', JSON.stringify(newUser));
+                localStorage.setItem('isLoggedIn', 'true');
+                
+                showToast('Pendaftaran berhasil! Anda telah masuk.', 'success');
+                closeAuthModal();
+                checkAuthStatus();
+                
+                // Clear form
+                registerForm.reset();
+                document.getElementById('password-strength-bar').className = 'password-strength-bar';
+                document.getElementById('password-strength-text').textContent = '';
+            } catch (error) {
+                showToast('Terjadi kesalahan saat mendaftar', 'error');
+                console.error('Registration error:', error);
+            }
         });
 
         // Logout
