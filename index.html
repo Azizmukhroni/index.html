@@ -22,6 +22,9 @@
     <!-- Google Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
     
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    
     <!-- Firebase App -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
@@ -508,6 +511,27 @@
             resize: vertical;
         }
         
+        /* Map Container */
+        .map-container {
+            height: 300px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #e8e8e8;
+        }
+        
+        #location-map {
+            height: 100%;
+            width: 100%;
+        }
+        
+        .map-instructions {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
         /* File Upload Styles */
         .file-upload-container {
             margin-bottom: 25px;
@@ -611,6 +635,82 @@
         
         .file-preview-remove:hover {
             transform: scale(1.2);
+        }
+        
+        /* Social Sharing Section */
+        .social-sharing {
+            padding: 60px 0;
+            background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+            text-align: center;
+            color: white;
+        }
+        
+        .social-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .social-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .facebook {
+            background-color: #3b5998;
+        }
+        
+        .twitter {
+            background-color: #1da1f2;
+        }
+        
+        .whatsapp {
+            background-color: #25d366;
+        }
+        
+        /* Search Section in Complaints Modal */
+        .search-container {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
         }
         
         /* Download Section */
@@ -773,6 +873,24 @@
             to { transform: rotate(360deg); }
         }
         
+        /* Validation Styles */
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .form-group.error input,
+        .form-group.error textarea,
+        .form-group.error select {
+            border-color: #e74c3c;
+        }
+        
+        .form-group.error .error-message {
+            display: block;
+        }
+        
         /* Responsive Styles */
         @media (max-width: 768px) {
             .hero h2 {
@@ -821,6 +939,20 @@
             
             .stat-number {
                 font-size: 2rem;
+            }
+            
+            .social-buttons {
+                gap: 10px;
+            }
+            
+            .social-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+            
+            .map-container {
+                height: 250px;
             }
         }
 
@@ -1230,6 +1362,13 @@
                 <h2>Daftar Pengaduan Anda</h2>
                 <p>Berikut adalah riwayat pengaduan yang telah Anda laporkan</p>
             </div>
+            
+            <!-- Search Box -->
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="search-complaints" class="search-input" placeholder="Cari pengaduan...">
+            </div>
+            
             <div class="complaints-list" id="complaints-list">
                 <!-- Will be populated by JavaScript -->
             </div>
@@ -1293,7 +1432,7 @@
             </div>
         </section>
 
-        <!-- Statistics Section - Baru Ditambahkan -->
+        <!-- Statistics Section -->
         <section class="statistics" id="statistics">
             <div class="container">
                 <h2 class="section-title">Statistik Pengaduan</h2>
@@ -1382,70 +1521,100 @@
             <div class="container">
                 <h2 class="section-title">Buat Pengaduan Baru</h2>
                 <div class="form-container">
-                    <form action="https://formspree.io/f/mwpnwrzk" method="POST" enctype="multipart/form-data" id="complaint-form">
-                      <input type="hidden" name="_subject" value="Pengaduan Baru dari Website">
-                      <input type="hidden" name="_replyto" value="aduanmasyarakat5@gmail.com">
-                      <input type="hidden" name="_format" value="plain">
-                      <input type="text" name="_gotcha" style="display:none">
-                      
-                      <div class="form-group">
-                        <label for="name">Nama Lengkap *</label>
-                        <input type="text" id="name" name="name" required aria-required="true">
-                      </div>
-                      
-                      <div class="form-group">
-                        <label for="email">Email *</label>
-                        <input type="email" id="email" name="email" required aria-required="true">
-                      </div>
-                      
-                      <div class="form-group">
-                        <label for="phone">Nomor Telepon</label>
-                        <input type="tel" id="phone" name="phone">
-                      </div>
-                      
-                      <div class="form-group">
-                        <label for="location">Lokasi Kejadian *</label>
-                        <input type="text" id="location" name="location" required aria-required="true">
-                      </div>
-                      
-                      <div class="form-group">
-                        <label for="category">Kategori Pengaduan *</label>
-                        <select id="category" name="category" required aria-required="true">
-                          <option value="">Pilih Kategori</option>
-                          <option value="infrastruktur">Infrastruktur (Jalan, Jembatan)</option>
-                          <option value="kebersihan">Kebersihan (Sampah, Selokan)</option>
-                          <option value="keamanan">Keamanan (Lampu Jalan, Patroli)</option>
-                          <option value="lainnya">Lainnya</option>
-                        </select>
-                      </div>
-                      
-                      <div class="form-group">
-                        <label for="description">Deskripsi Pengaduan *</label>
-                        <textarea id="description" name="description" required aria-required="true"></textarea>
-                      </div>
-                      
-                      <!-- File Upload Section -->
-                      <div class="file-upload-container">
-                        <label class="file-upload-label">Unggah Bukti (Foto/Dokumen)</label>
-                        <p style="font-size: 14px; color: #7f8c8d; margin-bottom: 15px;">Unggah foto atau dokumen pendukung (Maksimal 5 file, 5MB per file)</p>
+                    <form action="https://formspree.io/f/xdklpyyj" method="POST" enctype="multipart/form-data" id="complaint-form">
+                        <input type="hidden" name="_subject" value="Pengaduan Baru dari Website">
+                        <input type="hidden" name="_replyto" value="aduanmasyarakat5@gmail.com">
+                        <input type="hidden" name="_format" value="plain">
+                        <input type="text" name="_gotcha" style="display:none">
                         
-                        <div class="file-upload-wrapper">
-                          <div class="file-upload-input" id="file-drop-area">
-                            <i class="fas fa-cloud-upload-alt" style="font-size: 32px; margin-bottom: 15px; color: #3498db;"></i>
-                            <p>Seret file ke sini atau klik untuk memilih</p>
-                            <button type="button" class="file-upload-button">Pilih File</button>
-                            <input type="file" id="file-input" name="attachments" multiple accept="image/*,.pdf,.doc,.docx" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" aria-label="Unggah file pendukung">
-                          </div>
+                        <div class="form-group">
+                            <label for="name">Nama Lengkap *</label>
+                            <input type="text" id="name" name="name" required aria-required="true">
+                            <div class="error-message" id="name-error">Nama lengkap harus diisi</div>
                         </div>
                         
-                        <div class="file-preview-container" id="file-preview-container"></div>
-                      </div>
-                      
-                      <button type="submit" class="btn" id="submit-button" style="width: 100%;">
-                        <span id="submit-text">Kirim Pengaduan</span>
-                        <span id="submit-loading" style="display: none;"><span class="spinner"></span> Mengirim...</span>
-                      </button>
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required aria-required="true">
+                            <div class="error-message" id="email-error">Format email tidak valid</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Nomor Telepon</label>
+                            <input type="tel" id="phone" name="phone">
+                            <div class="error-message" id="phone-error">Format nomor telepon tidak valid</div>
+                        </div>
+                        
+                        <!-- Map Integration -->
+                        <div class="form-group">
+                            <label for="location">Lokasi Kejadian *</label>
+                            <div class="map-container">
+                                <div id="location-map"></div>
+                            </div>
+                            <p class="map-instructions">Klik pada peta untuk menentukan lokasi kejadian</p>
+                            <input type="text" id="location" name="location" required aria-required="true" readonly>
+                            <div class="error-message" id="location-error">Lokasi harus dipilih</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="category">Kategori Pengaduan *</label>
+                            <select id="category" name="category" required aria-required="true">
+                                <option value="">Pilih Kategori</option>
+                                <option value="infrastruktur">Infrastruktur (Jalan, Jembatan)</option>
+                                <option value="kebersihan">Kebersihan (Sampah, Selokan)</option>
+                                <option value="keamanan">Keamanan (Lampu Jalan, Patroli)</option>
+                                <option value="lainnya">Lainnya</option>
+                            </select>
+                            <div class="error-message" id="category-error">Kategori harus dipilih</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description">Deskripsi Pengaduan *</label>
+                            <textarea id="description" name="description" required aria-required="true"></textarea>
+                            <div class="error-message" id="description-error">Deskripsi harus diisi</div>
+                        </div>
+                        
+                        <!-- File Upload Section -->
+                        <div class="file-upload-container">
+                            <label class="file-upload-label">Unggah Bukti (Foto/Dokumen)</label>
+                            <p style="font-size: 14px; color: #7f8c8d; margin-bottom: 15px;">Unggah foto atau dokumen pendukung (Maksimal 5 file, 5MB per file)</p>
+                            
+                            <div class="file-upload-wrapper">
+                                <div class="file-upload-input" id="file-drop-area">
+                                    <i class="fas fa-cloud-upload-alt" style="font-size: 32px; margin-bottom: 15px; color: #3498db;"></i>
+                                    <p>Seret file ke sini atau klik untuk memilih</p>
+                                    <button type="button" class="file-upload-button">Pilih File</button>
+                                    <input type="file" id="file-input" name="attachments" multiple accept="image/*,.pdf,.doc,.docx" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" aria-label="Unggah file pendukung">
+                                </div>
+                            </div>
+                            
+                            <div class="file-preview-container" id="file-preview-container"></div>
+                        </div>
+                        
+                        <button type="submit" class="btn" id="submit-button" style="width: 100%;">
+                            <span id="submit-text">Kirim Pengaduan</span>
+                            <span id="submit-loading" style="display: none;"><span class="spinner"></span> Mengirim...</span>
+                        </button>
                     </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Social Sharing Section -->
+        <section class="social-sharing">
+            <div class="container">
+                <h2 class="section-title">Bagikan Aplikasi Ini</h2>
+                <p>Bantu sebarkan informasi tentang AduanMasyarakat kepada masyarakat lainnya</p>
+                <div class="social-buttons">
+                    <a href="#" class="social-btn facebook" id="share-facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="social-btn twitter" id="share-twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-btn whatsapp" id="share-whatsapp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
                 </div>
             </div>
         </section>
@@ -1488,6 +1657,9 @@
         </div>
     </footer>
 
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
     <script>
         // Konfigurasi Firebase - GANTI DENGAN KONFIGURASI ANDA
         const firebaseConfig = {
@@ -1528,6 +1700,133 @@
             firebaseStatus.textContent = "Firebase: Disconnected";
             firebaseStatus.classList.add('firebase-disconnected');
             firebaseStatus.style.display = 'block';
+        }
+        
+        // Inisialisasi Peta
+        let map = null;
+        let marker = null;
+        
+        function initMap() {
+            // Default location (contoh: Jakarta)
+            const defaultLocation = [-6.2088, 106.8456];
+            
+            // Inisialisasi peta
+            map = L.map('location-map').setView(defaultLocation, 13);
+            
+            // Tambahkan tile layer (OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            
+            // Tambahkan marker
+            marker = L.marker(defaultLocation, {
+                draggable: true
+            }).addTo(map);
+            
+            // Event ketika marker dipindahkan
+            marker.on('dragend', function() {
+                updateLocationInput();
+            });
+            
+            // Event ketika peta diklik
+            map.on('click', function(e) {
+                marker.setLatLng(e.latlng);
+                updateLocationInput();
+            });
+            
+            // Coba dapatkan lokasi pengguna
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const userLocation = [
+                            position.coords.latitude,
+                            position.coords.longitude
+                        ];
+                        
+                        map.setView(userLocation, 15);
+                        marker.setLatLng(userLocation);
+                        updateLocationInput();
+                    },
+                    function(error) {
+                        console.error("Error getting location:", error);
+                        // Tetap gunakan lokasi default
+                        updateLocationInput();
+                    }
+                );
+            } else {
+                console.error("Geolocation is not supported by this browser.");
+                updateLocationInput();
+            }
+        }
+        
+        function updateLocationInput() {
+            const latLng = marker.getLatLng();
+            document.getElementById('location').value = `${latLng.lat.toFixed(6)}, ${latLng.lng.toFixed(6)}`;
+        }
+        
+        // Fungsi untuk validasi form
+        function validateForm() {
+            let isValid = true;
+            
+            // Validasi nama
+            const name = document.getElementById('name').value.trim();
+            if (!name) {
+                document.getElementById('name').parentElement.classList.add('error');
+                isValid = false;
+            } else {
+                document.getElementById('name').parentElement.classList.remove('error');
+            }
+            
+            // Validasi email
+            const email = document.getElementById('email').value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                document.getElementById('email').parentElement.classList.add('error');
+                isValid = false;
+            } else {
+                document.getElementById('email').parentElement.classList.remove('error');
+            }
+            
+            // Validasi telepon (opsional)
+            const phone = document.getElementById('phone').value.trim();
+            if (phone) {
+                const phoneRegex = /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/;
+                if (!phoneRegex.test(phone)) {
+                    document.getElementById('phone').parentElement.classList.add('error');
+                    isValid = false;
+                } else {
+                    document.getElementById('phone').parentElement.classList.remove('error');
+                }
+            }
+            
+            // Validasi lokasi
+            const location = document.getElementById('location').value.trim();
+            if (!location) {
+                document.getElementById('location').parentElement.classList.add('error');
+                isValid = false;
+            } else {
+                document.getElementById('location').parentElement.classList.remove('error');
+            }
+            
+            // Validasi kategori
+            const category = document.getElementById('category').value;
+            if (!category) {
+                document.getElementById('category').parentElement.classList.add('error');
+                isValid = false;
+            } else {
+                document.getElementById('category').parentElement.classList.remove('error');
+            }
+            
+            // Validasi deskripsi
+            const description = document.getElementById('description').value.trim();
+            if (!description) {
+                document.getElementById('description').parentElement.classList.add('error');
+                isValid = false;
+            } else {
+                document.getElementById('description').parentElement.classList.remove('error');
+            }
+            
+            return isValid;
         }
         
         // Fungsi untuk update statistik
@@ -1660,10 +1959,98 @@
             }, 3000);
         }
         
+        // Fungsi untuk mencari pengaduan
+        function searchComplaints() {
+            const searchTerm = document.getElementById('search-complaints').value.toLowerCase();
+            const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+            const complaintsList = document.getElementById('complaints-list');
+            
+            if (complaints.length === 0) {
+                complaintsList.innerHTML = `
+                    <div class="no-complaints">
+                        <i class="fas fa-inbox"></i>
+                        <h3>Belum ada pengaduan</h3>
+                        <p>Anda belum membuat pengaduan apapun. Klik tombol di bawah untuk membuat pengaduan pertama Anda.</p>
+                        <a href="#form-section" class="btn" style="margin-top: 20px;">Buat Pengaduan</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            complaintsList.innerHTML = '';
+            const filteredComplaints = complaints.filter(complaint => {
+                return (
+                    complaint.description.toLowerCase().includes(searchTerm) ||
+                    complaint.category.toLowerCase().includes(searchTerm) ||
+                    complaint.location.toLowerCase().includes(searchTerm)
+                );
+            });
+            
+            if (filteredComplaints.length === 0) {
+                complaintsList.innerHTML = `
+                    <div class="no-complaints">
+                        <i class="fas fa-search"></i>
+                        <h3>Tidak ada hasil pencarian</h3>
+                        <p>Tidak ada pengaduan yang sesuai dengan pencarian Anda.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredComplaints.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            filteredComplaints.forEach(complaint => {
+                const date = new Date(complaint.timestamp).toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                const complaintCard = document.createElement('div');
+                complaintCard.className = `complaint-card ${complaint.status === 'done' ? 'done' : ''}`;
+                
+                complaintCard.innerHTML = `
+                    <div class="complaint-header">
+                        <span class="complaint-category">${escapeHtml(complaint.category)}</span>
+                        <span class="complaint-date">${date}</span>
+                    </div>
+                    <div class="complaint-description">
+                        ${escapeHtml(complaint.description)}
+                    </div>
+                    <div class="complaint-footer">
+                        <span class="complaint-id">ID: ${complaint.id}</span>
+                        <span class="status ${complaint.status === 'done' ? 'done' : 'process'}">
+                            ${complaint.status === 'done' ? 'Selesai' : 'Diproses'}
+                        </span>
+                    </div>
+                `;
+                
+                complaintsList.appendChild(complaintCard);
+            });
+        }
+        
+        // Fungsi untuk berbagi melalui media sosial
+        function initSocialSharing() {
+            const currentUrl = encodeURIComponent(window.location.href);
+            const title = encodeURIComponent('AduanMasyarakat - Layanan Pengaduan Real-Time');
+            
+            document.getElementById('share-facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`;
+            document.getElementById('share-twitter').href = `https://twitter.com/intent/tweet?text=${title}&url=${currentUrl}`;
+            document.getElementById('share-whatsapp').href = `https://wa.me/?text=${title}%20${currentUrl}`;
+        }
+        
         // Event listener untuk panel admin
         document.addEventListener('DOMContentLoaded', function() {
             // Inisialisasi statistik
             updateComplaintStatistics();
+            
+            // Inisialisasi peta
+            initMap();
+            
+            // Inisialisasi social sharing
+            initSocialSharing();
             
             // Toggle panel admin
             const adminToggle = document.getElementById('admin-toggle');
@@ -1750,6 +2137,9 @@
                     }
                 });
             }
+            
+            // Pencarian pengaduan
+            document.getElementById('search-complaints').addEventListener('input', searchComplaints);
         });
 
         // [Kode JavaScript lainnya tetap dipertahankan]
@@ -1798,7 +2188,7 @@
                     <div class="no-complaints">
                         <i class="fas fa-inbox"></i>
                         <h3>Belum ada pengaduan</h3>
-                        <p>Anda belum membuat pengaduan apapun. Klik tombol di bawah untuk membuat pengaduan pertama Anda.</p>
+                        <p>Anda belum membuat pengaduan apapun. Klick tombol di bawah untuk membuat pengaduan pertama Anda.</p>
                         <a href="#form-section" class="btn" style="margin-top: 20px;">Buat Pengaduan</a>
                     </div>
                 `;
@@ -2158,20 +2548,8 @@
                 e.preventDefault();
                 
                 // Validasi form
-                const requiredFields = form.querySelectorAll('[required]');
-                let isValid = true;
-                
-                requiredFields.forEach(field => {
-                    if (!field.value.trim()) {
-                        field.style.borderColor = '#e74c3c';
-                        isValid = false;
-                    } else {
-                        field.style.borderColor = '#ddd';
-                    }
-                });
-                
-                if (!isValid) {
-                    showToast('Harap isi semua field yang wajib diisi.', 'error');
+                if (!validateForm()) {
+                    showToast('Harap perbaiki kesalahan pada form sebelum mengirim.', 'error');
                     return;
                 }
                 
