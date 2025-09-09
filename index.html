@@ -2032,13 +2032,32 @@
         }
         
         // Fungsi untuk berbagi melalui media sosial
-        function initSocialSharing() {
-            const currentUrl = encodeURIComponent(window.location.href);
-            const title = encodeURIComponent('AduanMasyarakat - Layanan Pengaduan Real-Time');
-            
-            document.getElementById('share-facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`;
-            document.getElementById('share-twitter').href = `https://twitter.com/intent/tweet?text=${title}&url=${currentUrl}`;
-            document.getElementById('share-whatsapp').href = `https://wa.me/?text=${title}%20${currentUrl}`;
+        // Fungsi untuk berbagi melalui media sosial
+function initSocialSharing() {
+    const currentUrl = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent('AduanMasyarakat - Layanan Pengaduan Real-Time');
+    
+    // Facebook Share
+    document.getElementById('share-facebook').addEventListener('click', function(e) {
+        e.preventDefault();
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${currentUrl}&quote=${title}`, '_blank', 'width=600,height=400');
+    });
+    
+    // Twitter Share
+    document.getElementById('share-twitter').addEventListener('click', function(e) {
+        e.preventDefault();
+        window.open(`https://twitter.com/intent/tweet?text=${title}&url=${currentUrl}`, '_blank', 'width=600,height=400');
+    });
+    
+    // WhatsApp Share
+    document.getElementById('share-whatsapp').addEventListener('click', function(e) {
+        e.preventDefault();
+        window.open(`https://wa.me/?text=${title}%20${currentUrl}`, '_blank', 'width=600,height=400');
+    });
+}
+
+// Panggil fungsi saat halaman dimuat
+document.addEventListener('DOMContentLoaded', initSocialSharing);;
         }
         
         // Event listener untuk panel admin
