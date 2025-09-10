@@ -535,6 +535,7 @@
         /* File Upload Styles */
         .file-upload-container {
             margin-bottom: 25px;
+            display: none; /* Sembunyikan sementara karena Formspree tidak mendukung upload file */
         }
         
         .file-upload-label {
@@ -934,6 +935,10 @@
         .skeleton-line {
             height: 12px;
             margin-bottom: 10px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
         }
         
         .skeleton-line.short {
@@ -1601,7 +1606,7 @@
             <div class="container">
                 <h2 class="section-title">Buat Pengaduan Baru</h2>
                 <div class="form-container">
-                    <form action="https://formspree.io/f/xdklpyyj" method="POST" enctype="multipart/form-data" id="complaint-form">
+                    <form action="https://formspree.io/f/xdklpyyj" method="POST" id="complaint-form">
                         <input type="hidden" name="_subject" value="Pengaduan Baru dari Website">
                         <input type="hidden" name="_replyto" value="aduanmasyarakat5@gmail.com">
                         <input type="hidden" name="_format" value="plain">
@@ -1652,23 +1657,6 @@
                             <label for="description">Deskripsi Pengaduan *</label>
                             <textarea id="description" name="description" required aria-required="true"></textarea>
                             <div class="error-message" id="description-error">Deskripsi harus diisi</div>
-                        </div>
-                        
-                        <!-- File Upload Section -->
-                        <div class="file-upload-container">
-                            <label class="file-upload-label">Unggah Bukti (Foto/Dokumen)</label>
-                            <p style="font-size: 14px; color: #7f8c8d; margin-bottom: 15px;">Unggah foto atau dokumen pendukung (Maksimal 5 file, 5MB per file)</p>
-                            
-                            <div class="file-upload-wrapper">
-                                <div class="file-upload-input" id="file-drop-area">
-                                    <i class="fas fa-cloud-upload-alt" style="font-size: 32px; margin-bottom: 15px; color: #3498db;"></i>
-                                    <p>Seret file ke sini atau klik untuk memilih</p>
-                                    <button type="button" class="file-upload-button">Pilih File</button>
-                                    <input type="file" id="file-input" name="attachments" multiple accept="image/*,.pdf,.doc,.docx" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" aria-label="Unggah file pendukung">
-                                </div>
-                            </div>
-                            
-                            <div class="file-preview-container" id="file-preview-container"></div>
                         </div>
                         
                         <button type="submit" class="btn" id="submit-button" style="width: 100%;">
@@ -1741,14 +1729,14 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
     <script>
-        // Konfigurasi Firebase - GANTI DENGAN KONFIGURASI ANDA
+        // Konfigurasi Firebase - DENGAN KONFIGURASI ANDA
         const firebaseConfig = {
-            apiKey: "AIzaSyABC1234567890DEFxyz-ABCDEFGHIJKLM",
-            authDomain: "your-project-id.firebaseapp.com",
-            projectId: "your-project-id",
-            storageBucket: "your-project-id.appspot.com",
-            messagingSenderId: "1234567890",
-            appId: "1:1234567890:web:abc123def456"
+            apiKey: "AIzaSyDXxHBE7lk8hsOfvsMsFT8IgGS4TEpjOBY",
+            authDomain: "parlemen-rakyat.firebaseapp.com",
+            projectId: "parlemen-rakyat",
+            storageBucket: "parlemen-rakyat.firebasestorage.app",
+            messagingSenderId: "378674322699",
+            appId: "1:378674322699:web:e2acf19ed2564edabf160e"
         };
         
         // Inisialisasi Firebase
@@ -1958,7 +1946,7 @@
                         })
                         .then(() => {
                             console.log("Dokumen statistik default dibuat");
-                            updateComplaintStatistics(); // Panggil ulang setelah membuat dokumen
+                            updateComplaintStatistics(); // Panggul ulang setelah membuat dokumen
                         })
                         .catch((error) => {
                             console.error("Error membuat dokumen default:", error);
@@ -2281,325 +2269,171 @@
             });
         });
 
-        // File Upload Functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const fileInput = document.getElementById('file-input');
-            const fileDropArea = document.getElementById('file-drop-area');
-            const filePreviewContainer = document.getElementById('file-preview-container');
-            const fileUploadButton = document.querySelector('.file-upload-button');
-            const maxFiles = 5;
-            const maxFileSize = 5 * 1024 * 1024; // 5MB
-            let uploadedFiles = [];
+        // Fungsi untuk menyimpan data pengaduan ke localStorage
+        function saveComplaintToLocal(complaintData) {
+            // Ambil data yang sudah ada dari localStorage
+            const existingComplaints = JSON.parse(localStorage.getItem('complaints')) || [];
             
-            // Trigger file input when button is clicked
-            fileUploadButton.addEventListener('click', function() {
-                fileInput.click();
-            });
+            // Tambahkan ID dan timestamp ke data pengaduan
+            complaintData.id = 'ADU-' + Date.now();
+            complaintData.timestamp = new Date().toISOString();
+            complaintData.status = 'process'; // Status default
             
-            // Prevent default drag behaviors
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                fileDropArea.addEventListener(eventName, preventDefaults, false);
-                document.body.addEventListener(eventName, preventDefaults, false);
-            });
+            // Tambahkan pengaduan baru ke array
+            existingComplaints.push(complaintData);
             
-            // Highlight drop area when item is dragged over it
-            ['dragenter', 'dragover'].forEach(eventName => {
-                fileDropArea.addEventListener(eventName, highlight, false);
-            });
+            // Simpan kembali ke localStorage
+            localStorage.setItem('complaints', JSON.stringify(existingComplaints));
             
-            ['dragleave', 'drop'].forEach(eventName => {
-                fileDropArea.addEventListener(eventName, unhighlight, false);
-            });
+            return complaintData;
+        }
+        
+        // Fungsi untuk menghitung dan menampilkan statistik pengaduan
+        function updateComplaintStatistics() {
+            const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
             
-            // Handle dropped files
-            fileDropArea.addEventListener('drop', handleDrop, false);
+            // Hitung total pengaduan
+            const totalComplaints = complaints.length;
             
-            // Handle selected files from input
-            fileInput.addEventListener('change', handleFiles, false);
+            // Hitung pengaduan yang sedang diproses
+            const processedComplaints = complaints.filter(complaint => complaint.status === 'process').length;
             
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
+            // Hitung pengaduan yang selesai
+            const resolvedComplaints = complaints.filter(complaint => complaint.status === 'done').length;
             
-            function highlight() {
-                fileDropArea.style.backgroundColor = '#e8f4fc';
-                fileDropArea.style.borderColor = '#2980b9';
-                fileDropArea.style.borderStyle = 'solid';
-            }
-            
-            function unhighlight() {
-                fileDropArea.style.backgroundColor = '#f8f9fa';
-                fileDropArea.style.borderColor = '#3498db';
-                fileDropArea.style.borderStyle = 'dashed';
-            }
-            
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                handleFiles({ target: { files } });
-            }
-            
-            function handleFiles(e) {
-                const files = e.target.files;
-                
-                if (uploadedFiles.length + files.length > maxFiles) {
-                    showToast(`Maksimal ${maxFiles} file yang dapat diunggah.`, 'error');
-                    return;
-                }
-                
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-                    
-                    // Validate file size
-                    if (file.size > maxFileSize) {
-                        showToast(`File ${file.name} terlalu besar. Maksimal ukuran file adalah 5MB.`, 'error');
-                        continue;
-                    }
-                    
-                    // Validate file type
-                    const validFileTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-                    if (!validFileTypes.includes(file.type)) {
-                        showToast(`File ${file.name} memiliki tipe yang tidak didukung. Hanya gambar, PDF, dan dokumen Word yang diperbolehkan.`, 'error');
-                        continue;
-                    }
-                    
-                    uploadedFiles.push(file);
-                    previewFile(file);
-                }
-                
-                // Reset the file input
-                fileInput.value = '';
-            }
-            
-            function previewFile(file) {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                
-                reader.onloadend = function() {
-                    const preview = document.createElement('div');
-                    preview.className = 'file-preview';
-                    
-                    let iconClass = 'fa-file';
-                    if (file.type.includes('image')) {
-                        iconClass = 'fa-file-image';
-                    } else if (file.type.includes('pdf')) {
-                        iconClass = 'fa-file-pdf';
-                    } else if (file.type.includes('word')) {
-                        iconClass = 'fa-file-word';
-                    }
-                    
-                    const fileSize = formatFileSize(file.size);
-                    
-                    preview.innerHTML = `
-                        <div class="file-preview-icon">
-                            <i class="fas ${iconClass}"></i>
-                        </div>
-                        <div class="file-preview-info">
-                            <div class="file-preview-name">${escapeHtml(file.name)}</div>
-                            <div class="file-preview-size">${fileSize}</div>
-                        </div>
-                        <button class="file-preview-remove" data-filename="${escapeHtml(file.name)}" aria-label="Hapus file">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    `;
-                    
-                    filePreviewContainer.appendChild(preview);
-                    
-                    // Add event listener for remove button
-                    const removeBtn = preview.querySelector('.file-preview-remove');
-                    removeBtn.addEventListener('click', function() {
-                        const filename = this.getAttribute('data-filename');
-                        removeFile(filename);
-                        preview.remove();
-                    });
-                };
-            }
-            
-            function removeFile(filename) {
-                uploadedFiles = uploadedFiles.filter(file => file.name !== filename);
-            }
-            
-            function formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
-                const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-            }
-            
-            // Fungsi untuk menyimpan data pengaduan ke localStorage
-            function saveComplaintToLocal(complaintData) {
-                // Ambil data yang sudah ada dari localStorage
-                const existingComplaints = JSON.parse(localStorage.getItem('complaints')) || [];
-                
-                // Tambahkan ID dan timestamp ke data pengaduan
-                complaintData.id = 'ADU-' + Date.now();
-                complaintData.timestamp = new Date().toISOString();
-                complaintData.status = 'process'; // Status default
-                
-                // Tambahkan pengaduan baru ke array
-                existingComplaints.push(complaintData);
-                
-                // Simpan kembali ke localStorage
-                localStorage.setItem('complaints', JSON.stringify(existingComplaints));
-                
-                return complaintData;
-            }
-            
-            // Fungsi untuk menghitung dan menampilkan statistik pengaduan
-            function updateComplaintStatistics() {
-                const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
-                
-                // Hitung total pengaduan
-                const totalComplaints = complaints.length;
-                
-                // Hitung pengaduan yang sedang diproses
-                const processedComplaints = complaints.filter(complaint => complaint.status === 'process').length;
-                
-                // Hitung pengaduan yang selesai
-                const resolvedComplaints = complaints.filter(complaint => complaint.status === 'done').length;
-                
-                // Update elemen HTML dengan animasi
-                animateValue('total-complaints', 0, totalComplaints, 1000);
-                animateValue('processed-complaints', 0, processedComplaints, 1000);
-                animateValue('resolved-complaints', 0, resolvedComplaints, 1000);
-            }
+            // Update elemen HTML dengan animasi
+            animateValue('total-complaints', 0, totalComplaints, 1000);
+            animateValue('processed-complaints', 0, processedComplaints, 1000);
+            animateValue('resolved-complaints', 0, resolvedComplaints, 1000);
+        }
 
-            // Fungsi untuk menampilkan daftar pengaduan
-            function displayComplaints() {
-                const complaintsContainer = document.getElementById('complaints-container');
-                const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
-                
-                if (complaints.length === 0) {
-                    complaintsContainer.innerHTML = `
-                        <div style="text-align: center; padding: 40px; color: #7f8c8d;">
-                            <i class="fas fa-inbox" style="font-size: 40px; margin-bottom: 15px;"></i>
-                            <p>Belum ada pengaduan</p>
-                            <p>Jadilah yang pertama melaporkan</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                // Urutkan berdasarkan timestamp (terbaru pertama)
-                complaints.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-                
-                // Tampilkan maksimal 3 pengaduan terbaru
-                const recentComplaints = complaints.slice(0, 3);
-                
-                let complaintsHTML = '';
-                recentComplaints.forEach(complaint => {
-                    const date = new Date(complaint.timestamp).toLocaleDateString('id-ID', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric'
-                    });
-                    
-                    const statusClass = complaint.status === 'done' ? 'done' : 'process';
-                    const statusText = complaint.status === 'done' ? 'Selesai' : 'Diproses';
-                    
-                    complaintsHTML += `
-                        <div class="complaint-item">
-                            <h4>${escapeHtml(getCategoryLabel(complaint.category))} <span class="badge">${getCategoryLabel(complaint.category)}</span></h4>
-                            <p>${escapeHtml(complaint.description.substring(0, 60))}${complaint.description.length > 60 ? '...' : ''}</p>
-                            <p><small>${date}</small></p>
-                            <span class="status ${statusClass}">${statusText}</span>
-                        </div>
-                    `;
-                });
-                
-                complaintsContainer.innerHTML = complaintsHTML;
+        // Fungsi untuk menampilkan daftar pengaduan
+        function displayComplaints() {
+            const complaintsContainer = document.getElementById('complaints-container');
+            const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+            
+            if (complaints.length === 0) {
+                complaintsContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #7f8c8d;">
+                        <i class="fas fa-inbox" style="font-size: 40px; margin-bottom: 15px;"></i>
+                        <p>Belum ada pengaduan</p>
+                        <p>Jadilah yang pertama melaporkan</p>
+                    </div>
+                `;
+                return;
             }
             
-            function getCategoryLabel(categoryValue) {
-                const categories = {
-                    'infrastruktur': 'Infrastruktur',
-                    'kebersihan': 'Kebersihan',
-                    'keamanan': 'Keamanan',
-                    'lainnya': 'Lainnya'
-                };
-                
-                return categories[categoryValue] || 'Lainnya';
-            }
+            // Urutkan berdasarkan timestamp (terbaru pertama)
+            complaints.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             
-            // Update form submission untuk menyimpan data ke localStorage
-            const form = document.getElementById('complaint-form');
-            const submitButton = document.getElementById('submit-button');
-            const submitText = document.getElementById('submit-text');
-            const submitLoading = document.getElementById('submit-loading');
+            // Tampilkan maksimal 3 pengaduan terbaru
+            const recentComplaints = complaints.slice(0, 3);
             
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // Validasi form
-                if (!validateForm()) {
-                    showToast('Harap perbaiki kesalahan pada form sebelum mengirim.', 'error');
-                    return;
-                }
-                
-                // Tampilkan loading state
-                submitText.style.display = 'none';
-                submitLoading.style.display = 'inline';
-                submitButton.disabled = true;
-                loadingOverlay.classList.add('active');
-                
-                // Ambil data dari form
-                const formData = new FormData(form);
-                const complaintData = {
-                    name: formData.get('name'),
-                    email: formData.get('email'),
-                    phone: formData.get('phone'),
-                    location: formData.get('location'),
-                    category: formData.get('category'),
-                    description: formData.get('description')
-                };
-                
-                // Simpan ke localStorage
-                saveComplaintToLocal(complaintData);
-                
-                // Perbarui tampilan daftar pengaduan
-                displayComplaints();
-                
-                // Perbarui statistik
-                updateComplaintStatistics();
-                
-                // Kirim data ke Formspree
-                fetch(form.action, {
-                    method: 'POST',
-                    body: new FormData(form),
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        showToast('Pengaduan berhasil dikirim!', 'success');
-                        form.reset();
-                        filePreviewContainer.innerHTML = '';
-                        uploadedFiles = [];
-                    } else {
-                        showToast('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
-                    }
-                })
-                .catch(error => {
-                    showToast('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
-                    console.error('Error:', error);
-                })
-                .finally(() => {
-                    // Sembunyikan loading state
-                    submitText.style.display = 'inline';
-                    submitLoading.style.display = 'none';
-                    submitButton.disabled = false;
-                    loadingOverlay.classList.remove('active');
+            let complaintsHTML = '';
+            recentComplaints.forEach(complaint => {
+                const date = new Date(complaint.timestamp).toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
                 });
+                
+                const statusClass = complaint.status === 'done' ? 'done' : 'process';
+                const statusText = complaint.status === 'done' ? 'Selesai' : 'Diproses';
+                
+                complaintsHTML += `
+                    <div class="complaint-item">
+                        <h4>${escapeHtml(getCategoryLabel(complaint.category))} <span class="badge">${getCategoryLabel(complaint.category)}</span></h4>
+                        <p>${escapeHtml(complaint.description.substring(0, 60))}${complaint.description.length > 60 ? '...' : ''}</p>
+                        <p><small>${date}</small></p>
+                        <span class="status ${statusClass}">${statusText}</span>
+                    </div>
+                `;
             });
             
-            // Tampilkan daftar pengaduan dan statistik saat halaman dimuat
+            complaintsContainer.innerHTML = complaintsHTML;
+        }
+        
+        function getCategoryLabel(categoryValue) {
+            const categories = {
+                'infrastruktur': 'Infrastruktur',
+                'kebersihan': 'Kebersihan',
+                'keamanan': 'Keamanan',
+                'lainnya': 'Lainnya'
+            };
+            
+            return categories[categoryValue] || 'Lainnya';
+        }
+        
+        // Update form submission untuk menyimpan data ke localStorage
+        const form = document.getElementById('complaint-form');
+        const submitButton = document.getElementById('submit-button');
+        const submitText = document.getElementById('submit-text');
+        const submitLoading = document.getElementById('submit-loading');
+        
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validasi form
+            if (!validateForm()) {
+                showToast('Harap perbaiki kesalahan pada form sebelum mengirim.', 'error');
+                return;
+            }
+            
+            // Tampilkan loading state
+            submitText.style.display = 'none';
+            submitLoading.style.display = 'inline';
+            submitButton.disabled = true;
+            loadingOverlay.classList.add('active');
+            
+            // Ambil data dari form
+            const formData = new FormData(form);
+            const complaintData = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                location: formData.get('location'),
+                category: formData.get('category'),
+                description: formData.get('description')
+            };
+            
+            // Simpan ke localStorage
+            saveComplaintToLocal(complaintData);
+            
+            // Perbarui tampilan daftar pengaduan
             displayComplaints();
+            
+            // Perbarui statistik
             updateComplaintStatistics();
+            
+            // Kirim data ke Formspree
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    showToast('Pengaduan berhasil dikirim!', 'success');
+                    form.reset();
+                } else {
+                    showToast('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
+                }
+            })
+            .catch(error => {
+                showToast('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
+                console.error('Error:', error);
+            })
+            .finally(() => {
+                // Sembunyikan loading state
+                submitText.style.display = 'inline';
+                submitLoading.style.display = 'none';
+                submitButton.disabled = false;
+                loadingOverlay.classList.remove('active');
+            });
         });
-
+        
         // Event listener untuk panel admin
         document.addEventListener('DOMContentLoaded', function() {
             // Inisialisasi statistik
@@ -2610,6 +2444,9 @@
             
             // Inisialisasi social sharing
             initSocialSharing();
+            
+            // Tampilkan daftar pengaduan
+            displayComplaints();
             
             // Toggle panel admin
             const adminToggle = document.getElementById('admin-toggle');
