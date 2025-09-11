@@ -28,6 +28,7 @@
     <!-- Firebase App -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
     
     <style>
         * {
@@ -535,7 +536,7 @@
         /* File Upload Styles */
         .file-upload-container {
             margin-bottom: 25px;
-            display: none; /* Sembunyikan sementara karena Formspree tidak mendukung upload file */
+            display: block; /* Diubah dari display: none menjadi block */
         }
         
         .file-upload-label {
@@ -636,6 +637,45 @@
         
         .file-preview-remove:hover {
             transform: scale(1.2);
+        }
+
+        /* Image Preview Styles */
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .image-preview {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .image-preview-remove {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(231, 76, 60, 0.8);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
         }
         
         /* Social Sharing Section */
@@ -1020,6 +1060,11 @@
             .filter-select, .filter-date {
                 width: 100%;
             }
+            
+            .image-preview {
+                width: 80px;
+                height: 80px;
+            }
         }
 
         /* Animations */
@@ -1208,6 +1253,7 @@
         .complaints-header {
             margin-bottom: 25px;
             text-align: center;
+            position: relative;
         }
         
         .complaints-list {
@@ -1250,6 +1296,27 @@
             color: #2c3e50;
         }
         
+        .complaint-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .complaint-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .complaint-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
         .complaint-footer {
             display: flex;
             justify-content: space-between;
@@ -1271,6 +1338,55 @@
             font-size: 48px;
             margin-bottom: 15px;
             display: block;
+        }
+
+        /* Image Modal */
+        .image-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .image-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .image-modal-content {
+            max-width: 90%;
+            max-height: 90%;
+        }
+        
+        .image-modal-content img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 8px;
+        }
+        
+        .image-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.5);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Admin Panel */
@@ -1400,6 +1516,13 @@
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loading-overlay">
         <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="image-modal" id="image-modal">
+        <div class="image-modal-content" id="image-modal-content">
+            <span class="image-modal-close" id="image-modal-close">&times;</span>
+        </div>
     </div>
 
     <!-- Admin Panel -->
@@ -1606,7 +1729,7 @@
             <div class="container">
                 <h2 class="section-title">Buat Pengaduan Baru</h2>
                 <div class="form-container">
-                    <form action="https://formspree.io/f/xdklpyyj" method="POST" id="complaint-form">
+                    <form action="https://formspree.io/f/xdklpyyj" method="POST" id="complaint-form" enctype="multipart/form-data">
                         <input type="hidden" name="_subject" value="Pengaduan Baru dari Website">
                         <input type="hidden" name="_replyto" value="aduanmasyarakat5@gmail.com">
                         <input type="hidden" name="_format" value="plain">
@@ -1657,6 +1780,22 @@
                             <label for="description">Deskripsi Pengaduan *</label>
                             <textarea id="description" name="description" required aria-required="true"></textarea>
                             <div class="error-message" id="description-error">Deskripsi harus diisi</div>
+                        </div>
+                        
+                        <!-- File Upload Section -->
+                        <div class="file-upload-container">
+                            <label class="file-upload-label">Unggah Bukti Foto (Maksimal 5 file, 5MB per file)</label>
+                            <div class="file-upload-wrapper">
+                                <div class="file-upload-input" id="file-drop-area">
+                                    <i class="fas fa-cloud-upload-alt" style="font-size: 40px; margin-bottom: 15px; color: #3498db;"></i>
+                                    <p>Seret dan lepas file di sini atau klik untuk memilih</p>
+                                    <p class="map-instructions">Format yang didukung: JPG, PNG, PDF. Maksimal 5MB per file</p>
+                                </div>
+                                <input type="file" id="file-input" name="evidence_files" multiple accept=".jpg,.jpeg,.png,.pdf" style="display: none;">
+                            </div>
+                            <div class="image-preview-container" id="image-preview-container">
+                                <!-- Preview gambar akan ditampilkan di sini -->
+                            </div>
                         </div>
                         
                         <button type="submit" class="btn" id="submit-button" style="width: 100%;">
@@ -1742,10 +1881,12 @@
         // Inisialisasi Firebase
         let firebaseInitialized = false;
         let db = null;
+        let storage = null;
         
         try {
             firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
+            storage = firebase.storage();
             firebaseInitialized = true;
             console.log("Firebase berhasil diinisialisasi");
             
@@ -2138,6 +2279,20 @@
                 const complaintCard = document.createElement('div');
                 complaintCard.className = `complaint-card ${complaint.status === 'done' ? 'done' : ''}`;
                 
+                // Generate HTML untuk gambar jika ada
+                let imagesHTML = '';
+                if (complaint.images && complaint.images.length > 0) {
+                    imagesHTML = '<div class="complaint-images">';
+                    complaint.images.forEach(img => {
+                        imagesHTML += `
+                            <div class="complaint-image" onclick="openImageModal('${img.url}')">
+                                <img src="${img.url}" alt="Bukti pengaduan">
+                            </div>
+                        `;
+                    });
+                    imagesHTML += '</div>';
+                }
+                
                 complaintCard.innerHTML = `
                     <div class="complaint-header">
                         <span class="complaint-category">${escapeHtml(getCategoryLabel(complaint.category))}</span>
@@ -2146,6 +2301,7 @@
                     <div class="complaint-description">
                         ${escapeHtml(complaint.description)}
                     </div>
+                    ${imagesHTML}
                     <div class="complaint-footer">
                         <span class="complaint-id">ID: ${complaint.id}</span>
                         <span class="status ${complaint.status === 'done' ? 'done' : 'process'}">
@@ -2156,6 +2312,42 @@
                 
                 complaintsList.appendChild(complaintCard);
             });
+        }
+        
+        // Fungsi untuk membuka modal gambar
+        function openImageModal(imageUrl) {
+            const imageModal = document.getElementById('image-modal');
+            const imageModalContent = document.getElementById('image-modal-content');
+            
+            // Hapus konten sebelumnya
+            while (imageModalContent.firstChild) {
+                imageModalContent.removeChild(imageModalContent.firstChild);
+            }
+            
+            // Tambahkan gambar baru
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.alt = "Bukti pengaduan";
+            
+            // Tambahkan tombol close
+            const closeBtn = document.createElement('span');
+            closeBtn.className = 'image-modal-close';
+            closeBtn.innerHTML = '&times;';
+            closeBtn.onclick = closeImageModal;
+            
+            imageModalContent.appendChild(img);
+            imageModalContent.appendChild(closeBtn);
+            
+            // Tampilkan modal
+            imageModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Fungsi untuk menutup modal gambar
+        function closeImageModal() {
+            const imageModal = document.getElementById('image-modal');
+            imageModal.classList.remove('active');
+            document.body.style.overflow = '';
         }
         
         function getCategoryLabel(categoryValue) {
@@ -2288,6 +2480,210 @@
             complaintsContainer.innerHTML = complaintsHTML;
         }
         
+        // Fungsi untuk mengelola upload file
+        function initFileUpload() {
+            const fileInput = document.getElementById('file-input');
+            const fileDropArea = document.getElementById('file-drop-area');
+            const imagePreviewContainer = document.getElementById('image-preview-container');
+            const MAX_FILES = 5;
+            const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+            
+            let uploadedFiles = [];
+            
+            // Event listener untuk area drop
+            fileDropArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            fileDropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileDropArea.style.borderColor = '#2980b9';
+                fileDropArea.style.backgroundColor = '#e8f4fc';
+            });
+            
+            fileDropArea.addEventListener('dragleave', () => {
+                fileDropArea.style.borderColor = '#3498db';
+                fileDropArea.style.backgroundColor = '#f8f9fa';
+            });
+            
+            fileDropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileDropArea.style.borderColor = '#3498db';
+                fileDropArea.style.backgroundColor = '#f8f9fa';
+                
+                if (e.dataTransfer.files.length > 0) {
+                    handleFiles(e.dataTransfer.files);
+                }
+            });
+            
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length > 0) {
+                    handleFiles(fileInput.files);
+                }
+            });
+            
+            function handleFiles(files) {
+                for (let i = 0; i < files.length; i++) {
+                    if (uploadedFiles.length >= MAX_FILES) {
+                        showToast(`Maksimal ${MAX_FILES} file yang diizinkan`, 'error');
+                        break;
+                    }
+                    
+                    const file = files[i];
+                    
+                    // Validasi tipe file
+                    const validFileTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+                    if (!validFileTypes.includes(file.type)) {
+                        showToast('Hanya file JPG, PNG, dan PDF yang diizinkan', 'error');
+                        continue;
+                    }
+                    
+                    // Validasi ukuran file
+                    if (file.size > MAX_FILE_SIZE) {
+                        showToast('Ukuran file maksimal 5MB', 'error');
+                        continue;
+                    }
+                    
+                    // Tambahkan file ke daftar
+                    uploadedFiles.push(file);
+                    
+                    // Tampilkan preview
+                    displayFilePreview(file);
+                }
+                
+                // Update input file
+                updateFileInput();
+            }
+            
+            function displayFilePreview(file) {
+                const previewDiv = document.createElement('div');
+                previewDiv.className = 'image-preview';
+                
+                if (file.type.includes('image')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = file.name;
+                        previewDiv.appendChild(img);
+                        
+                        const removeBtn = document.createElement('div');
+                        removeBtn.className = 'image-preview-remove';
+                        removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                        removeBtn.onclick = () => removeFile(file);
+                        previewDiv.appendChild(removeBtn);
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    // Untuk file PDF
+                    previewDiv.innerHTML = `
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                            <i class="fas fa-file-pdf" style="font-size: 30px; color: #e74c3c;"></i>
+                            <p style="font-size: 10px; margin-top: 5px; text-align: center;">${file.name}</p>
+                        </div>
+                        <div class="image-preview-remove" onclick="removeFileFromPreview(this.parentNode, '${file.name}')">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    `;
+                }
+                
+                imagePreviewContainer.appendChild(previewDiv);
+            }
+            
+            function removeFile(fileToRemove) {
+                uploadedFiles = uploadedFiles.filter(file => file !== fileToRemove);
+                updateFileInput();
+                updatePreviews();
+            }
+            
+            function removeFileFromPreview(previewElement, fileName) {
+                uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
+                previewElement.remove();
+                updateFileInput();
+            }
+            
+            function updatePreviews() {
+                imagePreviewContainer.innerHTML = '';
+                uploadedFiles.forEach(file => {
+                    displayFilePreview(file);
+                });
+            }
+            
+            function updateFileInput() {
+                // Buat DataTransfer object baru
+                const dataTransfer = new DataTransfer();
+                
+                // Tambahkan semua file yang diupload
+                uploadedFiles.forEach(file => {
+                    dataTransfer.items.add(file);
+                });
+                
+                // Update file input
+                fileInput.files = dataTransfer.files;
+                
+                // Update teks di area drop
+                if (uploadedFiles.length > 0) {
+                    fileDropArea.querySelector('p').textContent = `${uploadedFiles.length} file dipilih. Klik untuk menambah atau ubah`;
+                } else {
+                    fileDropArea.querySelector('p').textContent = 'Seret dan lepas file di sini atau klik untuk memilih';
+                }
+            }
+            
+            // Fungsi global untuk menghapus file dari preview
+            window.removeFileFromPreview = removeFileFromPreview;
+            
+            // Kembalikan array uploadedFiles untuk digunakan di form submission
+            return {
+                getUploadedFiles: () => uploadedFiles,
+                clearFiles: () => {
+                    uploadedFiles = [];
+                    updateFileInput();
+                    updatePreviews();
+                }
+            };
+        }
+        
+        // Fungsi untuk mengupload file ke Firebase Storage
+        async function uploadFilesToFirebase(files, complaintId) {
+            if (!firebaseInitialized || !files || files.length === 0) {
+                return [];
+            }
+            
+            const uploadPromises = [];
+            const uploadedUrls = [];
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileExtension = file.name.split('.').pop();
+                const fileName = `${complaintId}_${Date.now()}_${i}.${fileExtension}`;
+                const storageRef = storage.ref(`complaints/${complaintId}/${fileName}`);
+                
+                uploadPromises.push(
+                    storageRef.put(file).then(snapshot => {
+                        return snapshot.ref.getDownloadURL().then(url => {
+                            uploadedUrls.push({
+                                name: file.name,
+                                url: url,
+                                type: file.type
+                            });
+                            return url;
+                        });
+                    }).catch(error => {
+                        console.error("Error uploading file:", error);
+                        throw error;
+                    })
+                );
+            }
+            
+            try {
+                await Promise.all(uploadPromises);
+                return uploadedUrls;
+            } catch (error) {
+                console.error("Error uploading files:", error);
+                throw error;
+            }
+        }
+        
         // DOM Elements
         const navToggle = document.getElementById('nav-toggle');
         const navMenu = document.getElementById('nav-menu');
@@ -2299,6 +2695,7 @@
         const complaintsList = document.getElementById('complaints-list');
         const newComplaintBtn = document.getElementById('new-complaint-btn');
         const loadingOverlay = document.getElementById('loading-overlay');
+        const imageModalClose = document.getElementById('image-modal-close');
 
         // Navigation Menu
         function openNavMenu() {
@@ -2350,6 +2747,15 @@
             }
         });
 
+        // Image Modal
+        imageModalClose.addEventListener('click', closeImageModal);
+        
+        document.getElementById('image-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeImageModal();
+            }
+        });
+
         // New complaint button in phone mockup
         newComplaintBtn.addEventListener('click', function() {
             document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
@@ -2374,13 +2780,16 @@
             });
         });
 
+        // Inisialisasi file upload
+        const fileUploadManager = initFileUpload();
+        
         // Update form submission untuk menyimpan data ke localStorage
         const form = document.getElementById('complaint-form');
         const submitButton = document.getElementById('submit-button');
         const submitText = document.getElementById('submit-text');
         const submitLoading = document.getElementById('submit-loading');
         
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             // Validasi form
@@ -2403,45 +2812,82 @@
                 phone: formData.get('phone'),
                 location: formData.get('location'),
                 category: formData.get('category'),
-                description: formData.get('description')
+                description: formData.get('description'),
+                images: []
             };
             
-            // Simpan ke localStorage
-            saveComplaintToLocal(complaintData);
+            // Generate complaint ID
+            const complaintId = 'ADU-' + Date.now();
             
-            // Perbarui tampilan daftar pengaduan
-            displayComplaints();
-            
-            // Perbarui statistik
-            updateComplaintStats();
-            
-            // Kirim data ke Formspree
-            fetch(form.action, {
-                method: 'POST',
-                body: new FormData(form),
-                headers: {
-                    'Accept': 'application/json'
+            try {
+                // Upload files jika ada
+                const uploadedFiles = fileUploadManager.getUploadedFiles();
+                if (uploadedFiles.length > 0 && firebaseInitialized) {
+                    const uploadedUrls = await uploadFilesToFirebase(uploadedFiles, complaintId);
+                    complaintData.images = uploadedUrls;
                 }
-            })
-            .then(response => {
-                if (response.ok) {
-                    showToast('Pengaduan berhasil dikirim!', 'success');
-                    form.reset();
-                } else {
+                
+                // Simpan ke localStorage
+                saveComplaintToLocal(complaintData);
+                
+                // Perbarui tampilan daftar pengaduan
+                displayComplaints();
+                
+                // Perbarui statistik
+                updateComplaintStats();
+                
+                // Kirim data ke Formspree
+                const formspreeFormData = new FormData();
+                formspreeFormData.append('name', complaintData.name);
+                formspreeFormData.append('email', complaintData.email);
+                formspreeFormData.append('phone', complaintData.phone || '');
+                formspreeFormData.append('location', complaintData.location);
+                formspreeFormData.append('category', complaintData.category);
+                formspreeFormData.append('description', complaintData.description);
+                formspreeFormData.append('complaintId', complaintId);
+                
+                // Tambahkan info tentang file yang diupload
+                if (complaintData.images.length > 0) {
+                    formspreeFormData.append('attachments', `${complaintData.images.length} file terlampir`);
+                    complaintData.images.forEach((img, index) => {
+                        formspreeFormData.append(`attachment_${index + 1}`, img.url);
+                    });
+                }
+                
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formspreeFormData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        showToast('Pengaduan berhasil dikirim!', 'success');
+                        form.reset();
+                        fileUploadManager.clearFiles();
+                        map.setView([-6.2088, 106.8456], 13); // Reset map to default location
+                        marker.setLatLng([-6.2088, 106.8456]);
+                        updateLocationInput();
+                    } else {
+                        showToast('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
+                    }
+                })
+                .catch(error => {
                     showToast('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
-                }
-            })
-            .catch(error => {
-                showToast('Terjadi kesalahan saat mengirim pengaduan. Silakan coba lagi.', 'error');
-                console.error('Error:', error);
-            })
-            .finally(() => {
+                    console.error('Error:', error);
+                });
+                
+            } catch (error) {
+                console.error('Error processing complaint:', error);
+                showToast('Terjadi kesalahan saat memproses pengaduan. Silakan coba lagi.', 'error');
+            } finally {
                 // Sembunyikan loading state
                 submitText.style.display = 'inline';
                 submitLoading.style.display = 'none';
                 submitButton.disabled = false;
                 loadingOverlay.classList.remove('active');
-            });
+            }
         });
         
         // Event listener untuk panel admin
