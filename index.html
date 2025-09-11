@@ -1138,6 +1138,7 @@
         .loading-overlay.active {
             opacity: 1;
             visibility: visible;
+            display: flex;
         }
         
         .loading-spinner {
@@ -1246,6 +1247,7 @@
         .complaint-description {
             margin-bottom: 15px;
             line-height: 1.5;
+            color: #2c3e50;
         }
         
         .complaint-footer {
@@ -1341,6 +1343,7 @@
             justify-content: center;
             gap: 15px;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
         
         .stats-btn {
@@ -1471,22 +1474,19 @@
             <a href="index.html" class="nav-link">
                 <i class="fas fa-home"></i> Beranda
             </a>
-            <a href="tentang-kami.html" class="nav-link">
-                <i class="fas fa-info-circle"></i> Tentang Kami
-            </a>
             <a href="#form-section" class="nav-link">
                 <i class="fas fa-edit"></i> Buat Pengaduan
             </a>
             <a href="#" class="nav-link" id="view-complaints-link">
                 <i class="fas fa-list"></i> Lihat Pengaduan
             </a>
-            <a href="download.html" class="nav-link">
+            <a href="#download" class="nav-link">
                 <i class="fas fa-download"></i> Download App
             </a>
-            <a href="help.html" class="nav-link">
+            <a href="#footer" class="nav-link">
                 <i class="fas fa-question-circle"></i> Bantuan
             </a>
-            <a href="help.html#kontak" class="nav-link">
+            <a href="#footer" class="nav-link">
                 <i class="fas fa-phone-alt"></i> Kontak
             </a>
         </nav>
@@ -1692,11 +1692,11 @@
                 <h2 class="section-title">Download Aplikasi Sekarang</h2>
                 <p>Unduh aplikasi AduanMasyarakat secara gratis di platform Android</p>
                 <div class="download-buttons">
-                    <a href="download.html" class="download-btn">
+                    <a href="#" class="download-btn">
                         <i class="fab fa-google-play"></i>
                         <span>Google Play Store</span>
                     </a>
-                    <a href="download.html" class="download-btn">
+                    <a href="#" class="download-btn">
                         <i class="fas fa-download"></i>
                         <span>Download APK</span>
                     </a>
@@ -1705,7 +1705,7 @@
         </section>
     </main>
 
-    <footer>
+    <footer id="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-logo">
@@ -1714,11 +1714,11 @@
                 </div>
                 <p>Aplikasi layanan pengaduan masyarakat terpercaya sejak 2025</p>
                 <div class="footer-links">
-                    <a href="tentang-kami.html">Tentang Kami</a>
-                    <a href="privacy.html">Kebijakan Privasi</a>
-                    <a href="terms.html">Syarat & Ketentuan</a>
-                    <a href="help.html">Bantuan</a>
-                    <a href="help.html#kontak">Kontak</a>
+                    <a href="#">Tentang Kami</a>
+                    <a href="#">Kebijakan Privasi</a>
+                    <a href="#">Syarat & Ketentuan</a>
+                    <a href="#">Bantuan</a>
+                    <a href="#">Kontak</a>
                 </div>
                 <p class="copyright">© 2025 AduanMasyarakat. All rights reserved.</p>
             </div>
@@ -1727,16 +1727,16 @@
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-     <script>
-        // firebaseConfig = {
+    <script>
+        // Konfigurasi Firebase yang benar
+        const firebaseConfig = {
             apiKey: "AIzaSyDXxHBE7lk8hsOfvsMsFT8IgGS4TEpjOBY",
             authDomain: "parlemen-rakyat.firebaseapp.com",
             projectId: "parlemen-rakyat",
             storageBucket: "parlemen-rakyat.firebasestorage.app",
             messagingSenderId: "378674322699",
-            appId: "1:378674322699:web:e2acf19ed2564edabf160e"
-// For Firebase JavaScript SDK v7.20.0 and later, `measurementId` is an optional field
-  measurementId: "G-MEASUREMENT_ID",
+            appId: "1:378674322699:web:e2acf19ed2564edabf160e",
+            measurementId: "G-MEASUREMENT_ID"
         };
         
         // Inisialisasi Firebase
@@ -1803,55 +1803,65 @@
         let marker = null;
         
         function initMap() {
-            // Default location (contoh: Jakarta)
-            const defaultLocation = [-6.2088, 106.8456];
-            
-            // Inisialisasi peta
-            map = L.map('location-map').setView(defaultLocation, 13);
-            
-            // Tambahkan tile layer (OpenStreetMap)
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
-            
-            // Tambahkan marker
-            marker = L.marker(defaultLocation, {
-                draggable: true
-            }).addTo(map);
-            
-            // Event ketika marker dipindahkan
-            marker.on('dragend', function() {
-                updateLocationInput();
-            });
-            
-            // Event ketika peta diklik
-            map.on('click', function(e) {
-                marker.setLatLng(e.latlng);
-                updateLocationInput();
-            });
-            
-            // Coba dapatkan lokasi pengguna
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        const userLocation = [
-                            position.coords.latitude,
-                            position.coords.longitude
-                        ];
-                        
-                        map.setView(userLocation, 15);
-                        marker.setLatLng(userLocation);
-                        updateLocationInput();
-                    },
-                    function(error) {
-                        console.error("Error getting location:", error);
-                        // Tetap gunakan lokasi default
-                        updateLocationInput();
-                    }
-                );
-            } else {
-                console.error("Geolocation is not supported by this browser.");
-                updateLocationInput();
+            try {
+                // Default location (contoh: Jakarta)
+                const defaultLocation = [-6.2088, 106.8456];
+                
+                // Inisialisasi peta
+                const mapContainer = document.getElementById('location-map');
+                if (!mapContainer) {
+                    console.error("Map container not found!");
+                    return;
+                }
+                
+                map = L.map('location-map').setView(defaultLocation, 13);
+                
+                // Tambahkan tile layer (OpenStreetMap)
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+                
+                // Tambahkan marker
+                marker = L.marker(defaultLocation, {
+                    draggable: true
+                }).addTo(map);
+                
+                // Event ketika marker dipindahkan
+                marker.on('dragend', function() {
+                    updateLocationInput();
+                });
+                
+                // Event ketika peta diklik
+                map.on('click', function(e) {
+                    marker.setLatLng(e.latlng);
+                    updateLocationInput();
+                });
+                
+                // Coba dapatkan lokasi pengguna
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            const userLocation = [
+                                position.coords.latitude,
+                                position.coords.longitude
+                            ];
+                            
+                            map.setView(userLocation, 15);
+                            marker.setLatLng(userLocation);
+                            updateLocationInput();
+                        },
+                        function(error) {
+                            console.error("Error getting location:", error);
+                            // Tetap gunakan lokasi default
+                            updateLocationInput();
+                        }
+                    );
+                } else {
+                    console.error("Geolocation is not supported by this browser.");
+                    updateLocationInput();
+                }
+            } catch (error) {
+                console.error("Error initializing map:", error);
             }
         }
         
@@ -2130,7 +2140,7 @@
                 
                 complaintCard.innerHTML = `
                     <div class="complaint-header">
-                        <span class="complaint-category">${escapeHtml(complaint.category)}</span>
+                        <span class="complaint-category">${escapeHtml(getCategoryLabel(complaint.category))}</span>
                         <span class="complaint-date">${date}</span>
                     </div>
                     <div class="complaint-description">
@@ -2146,6 +2156,17 @@
                 
                 complaintsList.appendChild(complaintCard);
             });
+        }
+        
+        function getCategoryLabel(categoryValue) {
+            const categories = {
+                'infrastruktur': 'Infrastruktur',
+                'kebersihan': 'Kebersihan',
+                'keamanan': 'Keamanan',
+                'lainnya': 'Lainnya'
+            };
+            
+            return categories[categoryValue] || 'Lainnya';
         }
         
         // Fungsi untuk berbagi melalui media sosial
@@ -2181,6 +2202,90 @@
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
+        }
+        
+        // Fungsi untuk menyimpan data pengaduan ke localStorage
+        function saveComplaintToLocal(complaintData) {
+            // Ambil data yang sudah ada dari localStorage
+            const existingComplaints = JSON.parse(localStorage.getItem('complaints')) || [];
+            
+            // Tambahkan ID dan timestamp ke data pengaduan
+            complaintData.id = 'ADU-' + Date.now();
+            complaintData.timestamp = new Date().toISOString();
+            complaintData.status = 'process'; // Status default
+            
+            // Tambahkan pengaduan baru ke array
+            existingComplaints.push(complaintData);
+            
+            // Simpan kembali ke localStorage
+            localStorage.setItem('complaints', JSON.stringify(existingComplaints));
+            
+            return complaintData;
+        }
+        
+        // Fungsi untuk menghitung dan menampilkan statistik pengaduan
+        function updateComplaintStats() {
+            const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+            
+            // Hitung total pengaduan
+            const totalComplaints = complaints.length;
+            
+            // Hitung pengaduan yang sedang diproses
+            const processedComplaints = complaints.filter(complaint => complaint.status === 'process').length;
+            
+            // Hitung pengaduan yang selesai
+            const resolvedComplaints = complaints.filter(complaint => complaint.status === 'done').length;
+            
+            // Update elemen HTML dengan animasi
+            animateValue('total-complaints', 0, totalComplaints, 1000);
+            animateValue('processed-complaints', 0, processedComplaints, 1000);
+            animateValue('resolved-complaints', 0, resolvedComplaints, 1000);
+        }
+
+        // Fungsi untuk menampilkan daftar pengaduan
+        function displayComplaints() {
+            const complaintsContainer = document.getElementById('complaints-container');
+            const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+            
+            if (complaints.length === 0) {
+                complaintsContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #7f8c8d;">
+                        <i class="fas fa-inbox" style="font-size: 40px; margin-bottom: 15px;"></i>
+                        <p>Belum ada pengaduan</p>
+                        <p>Jadilah yang pertama melaporkan</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Urutkan berdasarkan timestamp (terbaru pertama)
+            complaints.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            // Tampilkan maksimal 3 pengaduan terbaru
+            const recentComplaints = complaints.slice(0, 3);
+            
+            let complaintsHTML = '';
+            recentComplaints.forEach(complaint => {
+                const date = new Date(complaint.timestamp).toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+                
+                const statusClass = complaint.status === 'done' ? 'done' : 'process';
+                const statusText = complaint.status === 'done' ? 'Selesai' : 'Diproses';
+                
+                complaintsHTML += `
+                    <div class="complaint-item">
+                        <h4>${escapeHtml(getCategoryLabel(complaint.category))}</h4>
+                        <p>${escapeHtml(complaint.description.substring(0, 60))}${complaint.description.length > 60 ? '...' : ''}</p>
+                        <p><small>${date}</small></p>
+                        <span class="status ${statusClass}">${statusText}</span>
+                    </div>
+                `;
+            });
+            
+            complaintsContainer.innerHTML = complaintsHTML;
         }
         
         // DOM Elements
@@ -2269,101 +2374,6 @@
             });
         });
 
-        // Fungsi untuk menyimpan data pengaduan ke localStorage
-        function saveComplaintToLocal(complaintData) {
-            // Ambil data yang sudah ada dari localStorage
-            const existingComplaints = JSON.parse(localStorage.getItem('complaints')) || [];
-            
-            // Tambahkan ID dan timestamp ke data pengaduan
-            complaintData.id = 'ADU-' + Date.now();
-            complaintData.timestamp = new Date().toISOString();
-            complaintData.status = 'process'; // Status default
-            
-            // Tambahkan pengaduan baru ke array
-            existingComplaints.push(complaintData);
-            
-            // Simpan kembali ke localStorage
-            localStorage.setItem('complaints', JSON.stringify(existingComplaints));
-            
-            return complaintData;
-        }
-        
-        // Fungsi untuk menghitung dan menampilkan statistik pengaduan
-        function updateComplaintStatistics() {
-            const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
-            
-            // Hitung total pengaduan
-            const totalComplaints = complaints.length;
-            
-            // Hitung pengaduan yang sedang diproses
-            const processedComplaints = complaints.filter(complaint => complaint.status === 'process').length;
-            
-            // Hitung pengaduan yang selesai
-            const resolvedComplaints = complaints.filter(complaint => complaint.status === 'done').length;
-            
-            // Update elemen HTML dengan animasi
-            animateValue('total-complaints', 0, totalComplaints, 1000);
-            animateValue('processed-complaints', 0, processedComplaints, 1000);
-            animateValue('resolved-complaints', 0, resolvedComplaints, 1000);
-        }
-
-        // Fungsi untuk menampilkan daftar pengaduan
-        function displayComplaints() {
-            const complaintsContainer = document.getElementById('complaints-container');
-            const complaints = JSON.parse(localStorage.getItem('complaints')) || [];
-            
-            if (complaints.length === 0) {
-                complaintsContainer.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #7f8c8d;">
-                        <i class="fas fa-inbox" style="font-size: 40px; margin-bottom: 15px;"></i>
-                        <p>Belum ada pengaduan</p>
-                        <p>Jadilah yang pertama melaporkan</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Urutkan berdasarkan timestamp (terbaru pertama)
-            complaints.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            
-            // Tampilkan maksimal 3 pengaduan terbaru
-            const recentComplaints = complaints.slice(0, 3);
-            
-            let complaintsHTML = '';
-            recentComplaints.forEach(complaint => {
-                const date = new Date(complaint.timestamp).toLocaleDateString('id-ID', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric'
-                });
-                
-                const statusClass = complaint.status === 'done' ? 'done' : 'process';
-                const statusText = complaint.status === 'done' ? 'Selesai' : 'Diproses';
-                
-                complaintsHTML += `
-                    <div class="complaint-item">
-                        <h4>${escapeHtml(getCategoryLabel(complaint.category))} <span class="badge">${getCategoryLabel(complaint.category)}</span></h4>
-                        <p>${escapeHtml(complaint.description.substring(0, 60))}${complaint.description.length > 60 ? '...' : ''}</p>
-                        <p><small>${date}</small></p>
-                        <span class="status ${statusClass}">${statusText}</span>
-                    </div>
-                `;
-            });
-            
-            complaintsContainer.innerHTML = complaintsHTML;
-        }
-        
-        function getCategoryLabel(categoryValue) {
-            const categories = {
-                'infrastruktur': 'Infrastruktur',
-                'kebersihan': 'Kebersihan',
-                'keamanan': 'Keamanan',
-                'lainnya': 'Lainnya'
-            };
-            
-            return categories[categoryValue] || 'Lainnya';
-        }
-        
         // Update form submission untuk menyimpan data ke localStorage
         const form = document.getElementById('complaint-form');
         const submitButton = document.getElementById('submit-button');
@@ -2403,7 +2413,7 @@
             displayComplaints();
             
             // Perbarui statistik
-            updateComplaintStatistics();
+            updateComplaintStats();
             
             // Kirim data ke Formspree
             fetch(form.action, {
